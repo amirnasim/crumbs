@@ -1,0 +1,13 @@
+<nav class="checkout-progress" aria-label="مراحل ثبت سفارش">
+  <ol class="checkout-progress__list checkout-progress__list--cafe">
+    <li class="checkout-progress__step{% if current_step == 1 %} is-active{% elif current_step > 1 %} is-complete{% endif %}">
+      <span class="checkout-progress__label">اطلاعات سفارش</span>
+    </li>
+    <li class="checkout-progress__step{% if current_step == 2 %} is-active{% elif current_step > 2 %} is-complete{% endif %}">
+      <span class="checkout-progress__label">روش پرداخت</span>
+    </li>
+    <li class="checkout-progress__step{% if current_step == 3 %} is-active{% elif current_step > 3 %} is-complete{% endif %}">
+      <span class="checkout-progress__label">بررسی و ثبت سفارش</span>
+    </li>
+  </ol>
+</nav>

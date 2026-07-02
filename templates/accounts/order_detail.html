@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-account{% endblock %}
+{% block title %}سفارش {{ order.order_number }}{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="flow-hero flow-hero--compact rtl-text">
+  <div class="container flow-hero__inner">
+    <p class="flow-hero__eyebrow">جزئیات سفارش</p>
+    {% if order.daily_sequence %}
+    <h1 class="flow-hero__title order-detail-hero__number" dir="ltr">{{ order|order_display_number }}</h1>
+    <p class="order-detail-hero__ref" dir="ltr">{{ order.order_number }}</p>
+    {% else %}
+    <h1 class="flow-hero__title order-detail-hero__number" dir="ltr">{{ order.order_number }}</h1>
+    {% endif %}
+    <p class="order-detail-status order-detail-status--{{ order.status }}" role="status">{{ order|fa_order_status }}</p>
+    <p class="flow-hero__lead">{{ order.created_at|date:"Y/m/d H:i" }}</p>
+  </div>
+</section>
+
+<section class="section account-flow-section">
+  <div class="container account-flow account-flow--wide">
+    {% include "partials/account_nav.html" %}
+
+    <div class="order-detail-stack rtl-text">
+      {% include "partials/order_summary.html" %}
+
+      <div class="order-detail-actions">
+        <a href="{% url 'accounts:order_list' %}" class="flow-back-link">بازگشت به سفارش‌ها</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

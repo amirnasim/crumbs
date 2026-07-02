@@ -1,0 +1,78 @@
+{% load crumbs_extras %}
+<header class="site-header site-header--brand" id="site-header">
+  <div class="header-inner">
+    <div class="header-start">
+      <button type="button" class="nav-toggle" id="nav-toggle" aria-label="باز کردن منو" aria-expanded="false" aria-controls="menu-drawer">
+        <span class="nav-toggle__bars" aria-hidden="true">
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+          <span class="nav-toggle__bar"></span>
+        </span>
+        <span class="nav-toggle__close" aria-hidden="true">&times;</span>
+      </button>
+      <a href="{% url 'core:cart' %}" class="header-cart-count" aria-label="سبد خرید">
+        <span class="header-cart-count__value ltr-text" dir="ltr">({{ cart_item_count }})</span>
+      </a>
+    </div>
+
+    <div class="header-brand">
+      {% include "partials/brand_logo.html" with size="header" %}
+    </div>
+
+    <nav class="header-nav" aria-label="ناوبری اصلی">
+      <ul class="header-nav__list">
+        <li><a href="{% url 'core:home' %}" class="header-nav__link rtl-text" data-nav="/">خانه</a></li>
+        <li><a href="{% url 'products:product_list' %}" class="header-nav__link rtl-text" data-nav="/shop">منو</a></li>
+        <li><a href="{% url 'core:about' %}" class="header-nav__link rtl-text" data-nav="/about">داستان ما</a></li>
+        <li><a href="{% url 'core:contact' %}" class="header-nav__link rtl-text" data-nav="/contact">تماس با ما</a></li>
+        <li><a href="{% url 'careers:careers' %}" class="header-nav__link rtl-text" data-nav="/careers">همکاری با ما</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'accounts:profile' %}" class="header-nav__link rtl-text" data-nav="/accounts/profile">حساب من</a></li>
+        {% else %}
+        <li><a href="{% url 'accounts:login' %}" class="header-nav__link rtl-text" data-nav="/accounts/login">حساب من</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="menu-drawer-backdrop" id="menu-drawer-backdrop" hidden aria-hidden="true"></div>
+
+<aside class="menu-drawer" id="menu-drawer" aria-label="منوی Crumbs" aria-hidden="true">
+  <div class="menu-drawer__inner">
+    <div class="menu-drawer__zone menu-drawer__zone--middle">
+      <nav class="menu-drawer__nav" aria-label="ناوبری اصلی">
+        <ul class="menu-drawer__list menu-drawer__list--primary menu-drawer__reveal menu-drawer__reveal--nav">
+          <li style="--nav-i: 0"><a href="{% url 'core:home' %}" class="menu-drawer__link rtl-text" data-nav="/">خانه</a></li>
+          <li style="--nav-i: 1"><a href="{% url 'products:product_list' %}" class="menu-drawer__link rtl-text" data-nav="/shop">منو</a></li>
+          <li style="--nav-i: 2"><a href="{% url 'core:about' %}" class="menu-drawer__link rtl-text" data-nav="/about">داستان ما</a></li>
+          <li style="--nav-i: 3"><a href="{% url 'core:contact' %}" class="menu-drawer__link rtl-text" data-nav="/contact">تماس با ما</a></li>
+          <li style="--nav-i: 4"><a href="{% url 'careers:careers' %}" class="menu-drawer__link rtl-text" data-nav="/careers">همکاری با ما</a></li>
+          {% if user.is_authenticated %}
+          <li style="--nav-i: 5"><a href="{% url 'accounts:profile' %}" class="menu-drawer__link rtl-text" data-nav="/accounts/profile">حساب من</a></li>
+          {% else %}
+          <li style="--nav-i: 5"><a href="{% url 'accounts:login' %}" class="menu-drawer__link rtl-text" data-nav="/accounts/login">حساب من</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div>
+
+    <hr class="menu-drawer__divider menu-drawer__reveal menu-drawer__reveal--lower" aria-hidden="true">
+
+    <div class="menu-drawer__zone menu-drawer__zone--bottom menu-drawer__lower menu-drawer__reveal menu-drawer__reveal--lower">
+      <div class="menu-drawer__contact">
+        <ul class="menu-drawer__contact-list">
+          <li><a href="tel:+982112345678" class="menu-drawer__contact-line ltr-text" dir="ltr">021-1234-5678</a></li>
+          <li><span class="menu-drawer__contact-line rtl-text">بلوار فرمانیه، ساختمان آرتا</span></li>
+          <li><span class="menu-drawer__contact-line rtl-text">هر روز 07:30 – 22:30</span></li>
+          <li><a href="https://instagram.com/crumbs.cafe" class="menu-drawer__contact-line ltr-text" dir="ltr" target="_blank" rel="noopener noreferrer">@crumbs.cafe</a></li>
+        </ul>
+      </div>
+
+      <div class="menu-drawer__footer">
+        <p class="menu-drawer__credit ltr-text" lang="en">© {% now "Y" %} Crumbs · Tehran</p>
+        <p class="menu-drawer__designer ltr-text" lang="en">Designed by Amirhossein Nasimi</p>
+      </div>
+    </div>
+  </div>
+</aside>

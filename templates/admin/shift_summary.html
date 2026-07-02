@@ -1,0 +1,199 @@
+{% extends "admin/base_site.html" %}
+{% load crumbs_extras %}
+
+{% block title %}Shift Summary{% endblock %}
+
+{% block content %}
+<h1>Shift Summary</h1>
+<p>Daily closing summary for in-cafe operations.</p>
+
+<form method="get" style="margin-bottom:24px;max-width:420px;">
+  <label for="shift-date" style="display:block;margin-bottom:8px;font-weight:600;">Date</label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input id="shift-date" type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}" style="padding:8px;">
+    <button type="submit" class="button default">Apply</button>
+  </div>
+</form>
+
+<h2>Overview — {{ selected_date|date:"Y-m-d" }}</h2>
+<table style="width:100%;max-width:720px;border-collapse:collapse;margin-bottom:24px;">
+  <tbody>
+    <tr style="border-bottom:1px solid #ddd;">
+      <th style="padding:8px;text-align:left;width:260px;">Total sales (paid)</th>
+      <td style="padding:8px;">{{ summary.total_sales }}</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <th style="padding:8px;text-align:left;">Number of orders</th>
+      <td style="padding:8px;">{{ summary.order_count }}</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <th style="padding:8px;text-align:left;">Paid orders</th>
+      <td style="padding:8px;">{{ summary.paid_order_count }}</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <th style="padding:8px;text-align:left;">Awaiting counter payment</th>
+      <td style="padding:8px;">{{ summary.awaiting_counter_payment_count }}</td>
+    </tr>
+    <tr style="border-bottom:1px solid #ddd;">
+      <th style="padding:8px;text-align:left;">Cancelled / refunded</th>
+      <td style="padding:8px;">{{ summary.cancelled_refunded_count }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Payment Breakdown</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;max-width:720px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Method</th>
+      <th style="padding:8px;text-align:left;">Paid orders</th>
+      <th style="padding:8px;text-align:left;">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in summary.payment_breakdown %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;">{{ row.label }}</td>
+      <td style="padding:8px;">{{ row.count }}</td>
+      <td style="padding:8px;">{{ row.total }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Top-Selling Products</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Product</th>
+      <th style="padding:8px;text-align:left;">Quantity sold</th>
+      <th style="padding:8px;text-align:left;">Revenue</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in summary.top_products %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;">{{ row.product_name }}</td>
+      <td style="padding:8px;">{{ row.quantity_sold }}</td>
+      <td style="padding:8px;">{{ row.revenue }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">No paid product sales for this date.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Low Stock Products</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Product</th>
+      <th style="padding:8px;text-align:left;">Stock</th>
+      <th style="padding:8px;text-align:left;">Reserved</th>
+      <th style="padding:8px;text-align:left;">Available</th>
+      <th style="padding:8px;text-align:left;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in summary.low_stock %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;">{{ row.product.name }}</td>
+      <td style="padding:8px;">{{ row.stock_quantity }}</td>
+      <td style="padding:8px;">{{ row.reserved_quantity }}</td>
+      <td style="padding:8px;">{{ row.available_quantity }}</td>
+      <td style="padding:8px;"><a href="{% url 'admin:inventory_productinventory_change' row.pk %}">View inventory</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="padding:8px;">No low-stock products.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Ready for Pickup ({{ summary.ready_pickup_orders|length }})</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Daily #</th>
+      <th style="padding:8px;text-align:left;">Order</th>
+      <th style="padding:8px;text-align:left;">Customer</th>
+      <th style="padding:8px;text-align:left;">Table / Note</th>
+      <th style="padding:8px;text-align:left;">Total</th>
+      <th style="padding:8px;text-align:left;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in summary.ready_pickup_orders %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;" dir="ltr">{% if order.daily_sequence %}{{ order|order_display_number }}{% else %}—{% endif %}</td>
+      <td style="padding:8px;">{{ order.order_number }}</td>
+      <td style="padding:8px;">{{ order.full_name }}</td>
+      <td style="padding:8px;">{{ order.notes|default:"—" }}</td>
+      <td style="padding:8px;">{{ order.total }}</td>
+      <td style="padding:8px;"><a href="{% url 'admin:orders_order_change' order.pk %}">View order</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" style="padding:8px;">No packaged orders for this date.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Pending Pickup / In Preparation ({{ summary.pending_pickup_orders|length }})</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Daily #</th>
+      <th style="padding:8px;text-align:left;">Order</th>
+      <th style="padding:8px;text-align:left;">Customer</th>
+      <th style="padding:8px;text-align:left;">Status</th>
+      <th style="padding:8px;text-align:left;">Total</th>
+      <th style="padding:8px;text-align:left;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in summary.pending_pickup_orders %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;" dir="ltr">{% if order.daily_sequence %}{{ order|order_display_number }}{% else %}—{% endif %}</td>
+      <td style="padding:8px;">{{ order.order_number }}</td>
+      <td style="padding:8px;">{{ order.full_name }}</td>
+      <td style="padding:8px;">{{ order.get_status_display }}</td>
+      <td style="padding:8px;">{{ order.total }}</td>
+      <td style="padding:8px;"><a href="{% url 'admin:orders_order_change' order.pk %}">View order</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6" style="padding:8px;">No pending in-cafe orders for this date.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Payment Issues ({{ summary.payment_issues|length }})</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Provider</th>
+      <th style="padding:8px;text-align:left;">Order</th>
+      <th style="padding:8px;text-align:left;">Amount</th>
+      <th style="padding:8px;text-align:left;">Status</th>
+      <th style="padding:8px;text-align:left;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for payment in summary.payment_issues %}
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:8px;">{{ payment.get_provider_display }}</td>
+      <td style="padding:8px;">{{ payment.order.order_number }}</td>
+      <td style="padding:8px;">{{ payment.amount }}</td>
+      <td style="padding:8px;">{{ payment.get_status_display }}</td>
+      <td style="padding:8px;"><a href="{% url 'admin:payments_payment_change' payment.pk %}">View payment</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="padding:8px;">No payment issues for this date.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p style="margin-top:24px;">
+  <a href="{% url 'admin:crumbs_ops' %}">Operations Task Center</a>
+  · <a href="{% url 'admin:crumbs_pickup_screen' %}">Pickup Screen</a>
+  · <a href="{% url 'admin:crumbs_order_lookup' %}">Order Lookup</a>
+</p>
+{% endblock %}

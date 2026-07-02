@@ -1,0 +1,17 @@
+{% extends "admin/index.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="margin-bottom: 20px; padding: 12px 16px; background: #417690; border-radius: 4px; display: flex; gap: 24px; flex-wrap: wrap;">
+  <a href="{% url 'admin:crumbs_ops' %}" style="color: #fff; font-weight: 600; text-decoration: none;">
+    {% translate "Operations Task Center" %}
+  </a>
+  <a href="{% url 'admin:crumbs_operations' %}" style="color: #fff; font-weight: 600; text-decoration: none;">
+    {% translate "Operations Dashboard" %}
+  </a>
+  <a href="{% url 'admin:crumbs_analytics' %}" style="color: #fff; font-weight: 600; text-decoration: none;">
+    {% translate "داشبورد آنالیتیکس کرامبز" %}
+  </a>
+</div>
+{{ block.super }}
+{% endblock %}

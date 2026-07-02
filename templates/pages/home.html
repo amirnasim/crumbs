@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-home{% endblock %}
+{% block title %}خانه{% endblock %}
+
+{% block preload %}
+<link rel="preload" as="image" href="https://images.pexels.com/photos/1727928/pexels-photo-1727928.jpeg?auto=compress&cs=tinysrgb&w=1600" fetchpriority="high">
+{% endblock %}
+
+{% block content %}
+<div class="home-scroll" id="home-scroll">
+  {% include "partials/hero_section.html" %}
+
+  <section class="story-scene story-scene--panel story-scene--signature" id="story-scene-2" aria-labelledby="signature-heading">
+    <div class="story-scene__inner">
+      <h2 id="signature-heading" class="story-scene__eyebrow rtl-text">امضای کرامبز</h2>
+      <div class="story-signature__grid">
+        {% for product in featured_products|slice:":3" %}
+        <article class="story-product">
+          <a href="{{ product.get_absolute_url }}" class="story-product__link" aria-label="{{ product.name }}">
+            <div class="story-product__media">
+              {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" decoding="async" width="400" height="500">
+              {% else %}
+              <div class="story-product__placeholder" aria-hidden="true"></div>
+              {% endif %}
+            </div>
+            <p class="story-product__name">{{ product.name }}</p>
+            {% if product.description %}
+            <p class="story-product__desc">{{ product.description|truncatewords:14 }}</p>
+            {% endif %}
+          </a>
+        </article>
+        {% empty %}
+        <article class="story-product">
+          <a href="{% url 'products:product_list' %}#cookies" class="story-product__link" aria-label="Cookies">
+            <div class="story-product__media"><div class="story-product__placeholder" aria-hidden="true"></div></div>
+            <p class="story-product__name ltr-text">Cookies</p>
+          </a>
+        </article>
+        <article class="story-product">
+          <a href="{% url 'products:product_list' %}#coffee" class="story-product__link" aria-label="Coffee">
+            <div class="story-product__media"><div class="story-product__placeholder" aria-hidden="true"></div></div>
+            <p class="story-product__name ltr-text">Coffee</p>
+          </a>
+        </article>
+        <article class="story-product">
+          <a href="{% url 'products:product_list' %}#food" class="story-product__link" aria-label="Seasonal">
+            <div class="story-product__media"><div class="story-product__placeholder" aria-hidden="true"></div></div>
+            <p class="story-product__name ltr-text">Seasonal</p>
+          </a>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="story-scene story-scene--panel story-scene--newsletter" id="story-scene-3" aria-labelledby="newsletter-heading">
+    <div class="story-scene__inner story-scene__inner--narrow">
+      <div class="story-newsletter">
+        <h2 id="newsletter-heading" class="story-newsletter__title rtl-text">به جمع Crumbs بپیوندید</h2>
+        <p class="story-newsletter__desc rtl-text">از منوی هفتگی و طعم‌های جدید باخبر شوید.</p>
+        <form method="post" class="story-newsletter__form" aria-label="عضویت در خبرنامه">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="newsletter">
+          <div class="story-newsletter__field ltr-text">
+            {{ newsletter_form.email }}
+          </div>
+          <button type="submit" class="story-newsletter__submit ltr-text" aria-label="Join Crumbs newsletter">Join</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

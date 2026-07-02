@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-account{% endblock %}
+{% block title %}حساب کاربری{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="flow-hero flow-hero--compact rtl-text">
+  <div class="container flow-hero__inner">
+    <p class="flow-hero__eyebrow">حساب کاربری</p>
+    <h1 class="flow-hero__title">سلام، {{ request.user.first_name|default:request.user.get_full_name|default:request.user.username }}</h1>
+    <p class="flow-hero__lead">از اینجا سفارش‌ها و اطلاعات حساب خود را مدیریت کنید.</p>
+  </div>
+</section>
+
+<section class="section account-flow-section">
+  <div class="container">
+    <nav class="account-home-menu rtl-text" aria-label="منوی حساب کاربری">
+      <a href="{% url 'accounts:order_list' %}" class="account-home-menu__link">سفارش‌های من</a>
+      <a href="#account-info" class="account-home-menu__link">اطلاعات حساب</a>
+      <form method="post" action="{% url 'accounts:logout' %}" class="account-home-menu__logout">
+        {% csrf_token %}
+        <button type="submit" class="account-home-menu__link account-home-menu__link--action">خروج</button>
+      </form>
+    </nav>
+
+    <section id="account-info" class="account-info-section rtl-text" aria-labelledby="account-info-heading">
+      <header class="account-info-section__head">
+        <h2 id="account-info-heading" class="account-info-section__title">اطلاعات حساب</h2>
+        <p class="account-info-section__lead">نام، تماس و جزئیات پروفایل خود را به‌روز نگه دارید.</p>
+      </header>
+
+      <form method="post" class="account-form account-form--flow">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">ذخیره تغییرات</button>
+      </form>
+    </section>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}ورود{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-sm">
+  <div class="container">
+    <h1 class="page-title">ورود</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container content-narrow">
+    <form method="post" class="account-form rtl-text">
+      {% csrf_token %}
+      <div class="form-group">
+        {{ form.username.label_tag }}
+        {{ form.username }}
+        {% if form.username.errors %}<p class="form-error">{{ form.username.errors.0 }}</p>{% endif %}
+      </div>
+      <div class="form-group">
+        {{ form.password.label_tag }}
+        {{ form.password }}
+        {% if form.password.errors %}<p class="form-error">{{ form.password.errors.0 }}</p>{% endif %}
+      </div>
+      {% if form.non_field_errors %}
+      <div class="checkout-form-alert" role="alert">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary btn-block">ورود</button>
+    </form>
+
+    <div class="login-sms-prepared" hidden aria-hidden="true">
+      <p>{{ sms_login_labels.login_with_sms }}</p>
+      <p>{{ sms_login_labels.send_code }}</p>
+      <p>{{ sms_login_labels.otp_code }}</p>
+    </div>
+
+    <p class="account-alt-link">حساب ندارید؟ <a href="{% url 'accounts:register' %}">ثبت‌نام کنید</a></p>
+  </div>
+</section>
+{% endblock %}

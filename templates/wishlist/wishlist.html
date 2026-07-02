@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}علاقه‌مندی‌ها{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-sm">
+  <div class="container">
+    <h1 class="page-title">علاقه‌مندی‌ها</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container account-layout">
+    {% include "partials/account_nav.html" %}
+
+    <div class="account-panel">
+      {% if items %}
+      <div class="product-grid">
+        {% for item in items %}
+          {% include "partials/product_card.html" with product=item.product %}
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <h3>لیست علاقه‌مندی‌ها خالی است</h3>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">کاوش فروشگاه</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

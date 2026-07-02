@@ -1,0 +1,29 @@
+<div
+  class="menu-panel{% if is_hero %} menu-panel--hero{% endif %}{% if default_slug == menu_slug %} is-active is-visible{% endif %}"
+  id="menu-panel-{{ menu_slug }}"
+  data-menu-panel="{{ menu_slug }}"
+  role="tabpanel"
+  aria-labelledby="menu-tab-{{ menu_slug }}"
+  {% if default_slug != menu_slug %}hidden{% endif %}
+>
+  <header class="menu-panel__header">
+    <h2 class="menu-panel__title">{{ menu_label }}</h2>
+    {% if menu_desc %}
+      <p class="menu-panel__desc">{{ menu_desc }}</p>
+    {% endif %}
+  </header>
+
+  <div class="product-grid product-grid--airy menu-panel__grid">
+    {% for group in products_by_category %}
+      {% if group.grouper == menu_slug or menu_slug == "food" and group.grouper == "bakery" %}
+        {% for product in group.list %}
+          {% include "partials/product_card.html" %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="menu-panel__empty">
+    <p class="menu-panel__empty-text">به‌زودی در این بخش منو اضافه می‌شود.</p>
+  </div>
+</div>

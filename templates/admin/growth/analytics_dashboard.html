@@ -1,0 +1,95 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}آنالیتیکس کرامبز{% endblock %}
+
+{% block content %}
+<h1>داشبورد آنالیتیکس کرامبز</h1>
+<p>بازه: {{ days }} روز گذشته</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:24px 0;">
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>درآمد</strong><br>{{ snapshot.revenue }} تومان
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>سفارش‌ها</strong><br>{{ snapshot.order_count }}
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>میانگین سفارش</strong><br>{{ snapshot.avg_order_value|floatformat:0 }} تومان
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>SMS ارسال‌شده</strong><br>{{ snapshot.sms_sent }}
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>SMS ناموفق</strong><br>{{ snapshot.sms_failed }}
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>سبدهای رها شده</strong><br>{{ snapshot.abandoned_active }}
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>بازیابی سبد</strong><br>{{ snapshot.abandoned_recovered }}
+  </div>
+</div>
+
+<h2>محصولات برتر</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#222;color:#fff;">
+      <th style="padding:8px;text-align:right;">محصول</th>
+      <th style="padding:8px;text-align:right;">تعداد</th>
+      <th style="padding:8px;text-align:right;">درآمد</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in snapshot.top_products %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ row.product_name }}</td>
+      <td style="padding:8px;">{{ row.qty }}</td>
+      <td style="padding:8px;">{{ row.revenue }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">داده‌ای موجود نیست.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>مشتریان برتر</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#222;color:#fff;">
+      <th style="padding:8px;text-align:right;">مشتری</th>
+      <th style="padding:8px;text-align:right;">سفارش</th>
+      <th style="padding:8px;text-align:right;">مجموع خرید</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in snapshot.top_customers %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ row.user__first_name }} {{ row.user__last_name }} ({{ row.user__username }})</td>
+      <td style="padding:8px;">{{ row.orders }}</td>
+      <td style="padding:8px;">{{ row.spent }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">داده‌ای موجود نیست.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>سگمنت مشتریان</h2>
+<ul>
+  {% for row in snapshot.segment_counts %}
+  <li>{{ row.segment__name }}: {{ row.count }}</li>
+  {% empty %}
+  <li>سگمنتی تعریف نشده — دستور seed_growth_defaults را اجرا کنید.</li>
+  {% endfor %}
+</ul>
+
+<h2>سطوح وفاداری</h2>
+<ul>
+  {% for row in snapshot.loyalty_counts %}
+  <li>{{ row.tier }}: {{ row.count }}</li>
+  {% empty %}
+  <li>حساب وفاداری وجود ندارد.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

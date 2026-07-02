@@ -1,0 +1,8 @@
+<nav class="account-flow-nav rtl-text" aria-label="ناوبری حساب کاربری">
+  <a href="{% url 'accounts:profile' %}" class="account-flow-nav__link">حساب کاربری</a>
+  <a href="{% url 'accounts:order_list' %}" class="account-flow-nav__link">سفارش‌های من</a>
+  <form method="post" action="{% url 'accounts:logout' %}" class="account-flow-nav__logout">
+    {% csrf_token %}
+    <button type="submit" class="account-flow-nav__link account-flow-nav__link--action">خروج</button>
+  </form>
+</nav>

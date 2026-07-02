@@ -1,0 +1,35 @@
+{% load crumbs_extras %}
+
+<div class="order-summary-panel rtl-text">
+  <h2 class="order-summary-panel__title">خلاصه سفارش</h2>
+
+  <ul class="order-summary-panel__items">
+    {% for item in items %}
+    <li class="order-summary-panel__item">
+      <span class="order-summary-panel__item-name">{{ item.quantity|fa_num }}× {{ item.product.name }}</span>
+      <span class="order-summary-panel__item-price">{{ item.line_total|toman }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <div class="order-summary-panel__totals">
+    <div class="order-summary-panel__row">
+      <span>جمع جزء</span>
+      <span>{{ cart.get_subtotal|toman }}</span>
+    </div>
+    {% if cart.applied_coupon_code or cart.referral_code %}
+    <div class="order-summary-panel__row order-summary-panel__row--muted">
+      <span>تخفیف</span>
+      <span>
+        {% if cart.applied_coupon_code %}کد: {{ cart.applied_coupon_code }}{% endif %}
+        {% if cart.applied_coupon_code and cart.referral_code %} · {% endif %}
+        {% if cart.referral_code %}معرف: {{ cart.referral_code }}{% endif %}
+      </span>
+    </div>
+    {% endif %}
+    <div class="order-summary-panel__row order-summary-panel__row--grand">
+      <strong>مجموع</strong>
+      <strong>{{ cart.get_subtotal|toman }}</strong>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-shop{% endblock %}
+{% block title %}منو{% if active_category %} — {{ active_category.name }}{% endif %}{% endblock %}
+{% block meta_description %}{% if active_category and active_category.description %}{{ active_category.description|truncatewords:30 }}{% else %}{{ seo_meta_description }}{% endif %}{% endblock %}
+{% block og_description %}{% if active_category and active_category.description %}{{ active_category.description|truncatewords:30 }}{% else %}{{ seo_meta_description }}{% endif %}{% endblock %}
+{% block twitter_description %}{% if active_category and active_category.description %}{{ active_category.description|truncatewords:30 }}{% else %}{{ seo_meta_description }}{% endif %}{% endblock %}
+{% block canonical_url %}{% if active_category %}{{ SITE_URL }}{% url 'products:category' active_category.slug %}{% else %}{{ SITE_URL }}{% url 'products:product_list' %}{% endif %}{% endblock %}
+{% block og_url %}{% if active_category %}{{ SITE_URL }}{% url 'products:category' active_category.slug %}{% else %}{{ SITE_URL }}{% url 'products:product_list' %}{% endif %}{% endblock %}
+{% block structured_data %}{% include "partials/structured_data_menu.html" %}{% endblock %}
+
+{% block content %}
+{% include "partials/cafe_table_banner.html" %}
+{% regroup products by category.slug as products_by_category %}
+
+{% if active_category %}
+  {% if active_category.slug == "bakery" %}
+    {% with default_slug="food" %}
+      {% include "shop/product_list_inner.html" %}
+    {% endwith %}
+  {% else %}
+    {% with default_slug=active_category.slug %}
+      {% include "shop/product_list_inner.html" %}
+    {% endwith %}
+  {% endif %}
+{% else %}
+  {% with default_slug="cookies" %}
+    {% include "shop/product_list_inner.html" %}
+  {% endwith %}
+{% endif %}
+{% endblock %}

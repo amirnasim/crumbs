@@ -1,0 +1,124 @@
+<section class="page-hero page-hero-sm checkout-flow-hero career-hero rtl-text" aria-labelledby="career-page-title">
+  <div class="container checkout-flow-container">
+    <h1 class="page-title" id="career-page-title">همکاری با ما</h1>
+    <div class="career-intro">
+      <p class="career-intro__subtitle">اگر علاقه‌مند به همکاری در تیم Crumbs هستید، فرم زیر را تکمیل کنید.</p>
+      <p class="career-intro__text">ما همیشه به دنبال افراد پرانرژی، مسئولیت‌پذیر و علاقه‌مند به فعالیت در محیط کافه و بیکری هستیم.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section checkout-flow-section career-form-section rtl-text" aria-label="فرم درخواست همکاری">
+  <div class="container checkout-flow-container">
+    <form method="post" enctype="multipart/form-data" class="career-application-form checkout-wizard-form" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+      <div class="checkout-form-alert" role="alert">
+        {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="career-form-stack">
+        <section class="career-form-card" aria-labelledby="career-section-personal">
+          <header class="career-section-header">
+            <h2 class="career-section-title" id="career-section-personal">اطلاعات فردی</h2>
+          </header>
+          <div class="checkout-fields career-fields-grid career-fields-grid--two">
+            <div class="form-group form-group--float">
+              <label for="{{ form.full_name.id_for_label }}" class="form-label">{{ form.full_name.label }}</label>
+              {{ form.full_name }}
+              {% if form.full_name.errors %}<p class="checkout-field-error">{{ form.full_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="{{ form.phone.id_for_label }}" class="form-label">{{ form.phone.label }}</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<p class="checkout-field-error">{{ form.phone.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+              {{ form.email }}
+              {% if form.email.errors %}<p class="checkout-field-error">{{ form.email.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="{{ form.age.id_for_label }}" class="form-label">{{ form.age.label }}</label>
+              {{ form.age }}
+              {% if form.age.errors %}<p class="checkout-field-error">{{ form.age.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float form-group--full">
+              <label for="{{ form.residential_area.id_for_label }}" class="form-label">{{ form.residential_area.label }}</label>
+              {{ form.residential_area }}
+              {% if form.residential_area.errors %}<p class="checkout-field-error">{{ form.residential_area.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </section>
+
+        <section class="career-form-card" aria-labelledby="career-section-job">
+          <header class="career-section-header">
+            <h2 class="career-section-title" id="career-section-job">اطلاعات شغلی</h2>
+          </header>
+          <div class="checkout-fields career-fields-grid career-fields-grid--two">
+            <div class="form-group form-group--float">
+              <label for="{{ form.desired_position.id_for_label }}" class="form-label">{{ form.desired_position.label }}</label>
+              {{ form.desired_position }}
+              {% if form.desired_position.errors %}<p class="checkout-field-error">{{ form.desired_position.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="{{ form.employment_type.id_for_label }}" class="form-label">{{ form.employment_type.label }}</label>
+              {{ form.employment_type }}
+              {% if form.employment_type.errors %}<p class="checkout-field-error">{{ form.employment_type.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="{{ form.years_of_experience.id_for_label }}" class="form-label">{{ form.years_of_experience.label }}</label>
+              {{ form.years_of_experience }}
+              {% if form.years_of_experience.errors %}<p class="checkout-field-error">{{ form.years_of_experience.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float form-group--full">
+              <label for="{{ form.relevant_experience.id_for_label }}" class="form-label">{{ form.relevant_experience.label }}</label>
+              {{ form.relevant_experience }}
+              {% if form.relevant_experience.errors %}<p class="checkout-field-error">{{ form.relevant_experience.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </section>
+
+        <section class="career-form-card" aria-labelledby="career-section-hr">
+          <header class="career-section-header">
+            <h2 class="career-section-title" id="career-section-hr">سؤالات استخدامی</h2>
+          </header>
+          <div class="checkout-fields career-fields-grid career-fields-grid--single">
+            {% for row in hr_field_rows %}
+            <div class="form-group form-group--float">
+              <label for="{{ row.field.id_for_label }}" class="form-label">{{ row.label }}</label>
+              {{ row.field }}
+              {% if row.field.errors %}<p class="checkout-field-error">{{ row.field.errors.0 }}</p>{% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="career-form-card" aria-labelledby="career-section-resume">
+          <header class="career-section-header">
+            <h2 class="career-section-title" id="career-section-resume">رزومه</h2>
+          </header>
+          <div class="checkout-fields">
+            <div class="form-group form-group--float">
+              <label for="{{ form.resume_file.id_for_label }}" class="form-label">{{ form.resume_file.label }}</label>
+              {{ form.resume_file }}
+              <ul class="career-form-help" aria-label="راهنمای بارگذاری رزومه">
+                <li>فقط فایل PDF</li>
+                <li>حداکثر حجم ۵ مگابایت</li>
+              </ul>
+              {% if form.resume_file.errors %}<p class="checkout-field-error">{{ form.resume_file.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="career-submit-wrap">
+        <button type="submit" class="btn btn-primary btn-lg btn-block checkout-submit-btn career-submit-btn">ارسال درخواست همکاری</button>
+      </div>
+    </form>
+  </div>
+</section>

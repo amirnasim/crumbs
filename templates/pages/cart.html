@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-cart{% endblock %}
+{% block title %}سبد خرید{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="flow-hero flow-hero--compact rtl-text">
+  <div class="container flow-hero__inner">
+    <p class="flow-hero__eyebrow">مرور سفارش</p>
+    <h1 class="flow-hero__title">سبد خرید</h1>
+    <p class="flow-hero__lead">سفارش خود را قبل از ثبت نهایی بررسی کنید.</p>
+  </div>
+</section>
+
+<section class="section checkout-flow-section">
+  <div class="container checkout-layout">
+    {% include "partials/cafe_table_banner.html" %}
+
+    {% if items %}
+    <div class="checkout-main rtl-text">
+      <p class="flow-trust-note">سفارش شما در کافه آماده می‌شود و از کانتر تحویل می‌گیرید.</p>
+
+      <div class="checkout-step-panel is-active is-visible">
+        <header class="checkout-step-header">
+          <h2 class="checkout-step-title">اقلام سفارش</h2>
+          <p class="checkout-step-desc">{{ items|length }} قلم در سبد شما.</p>
+        </header>
+
+        <ul class="cart-list-minimal">
+          {% for item in items %}
+          <li class="cart-line">
+            <a href="{{ item.product.get_absolute_url }}" class="cart-line__image">
+              {% if item.product.image %}
+                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="96" height="120" loading="lazy" decoding="async">
+              {% else %}
+                <div class="product-placeholder" aria-hidden="true"></div>
+              {% endif %}
+            </a>
+            <div class="cart-line__body">
+              <a href="{{ item.product.get_absolute_url }}" class="cart-line__name">{{ item.product.name }}</a>
+              <p class="cart-line__meta">
+                <span class="cart-line__unit">{{ item.product.price|toman }}</span>
+                <span class="cart-line__sep" aria-hidden="true">·</span>
+                <span class="cart-line__line-total">جمع: {{ item.line_total|toman }}</span>
+              </p>
+              <form method="post" class="cart-line__qty-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update">
+                <div class="quantity-control quantity-control--compact">
+                  <button type="button" class="qty-btn" data-action="decrease" aria-label="کاهش تعداد">−</button>
+                  <input type="number" name="quantity_{{ item.pk }}" value="{{ item.quantity }}" min="0" max="99" class="qty-input" aria-label="تعداد {{ item.product.name }}">
+                  <button type="button" class="qty-btn" data-action="increase" aria-label="افزایش تعداد">+</button>
+                </div>
+                <button type="submit" class="sr-only">بروزرسانی</button>
+              </form>
+            </div>
+            <div class="cart-line__aside">
+              <p class="cart-line__total">{{ item.line_total|toman }}</p>
+              <form method="post" class="cart-line__remove">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="remove">
+                <input type="hidden" name="product_id" value="{{ item.product.pk }}">
+                <button type="submit" class="btn-remove" aria-label="حذف {{ item.product.name }}">حذف</button>
+              </form>
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <p class="flow-microcopy">اطلاعات سفارش شما فقط برای آماده‌سازی و تحویل از کانتر استفاده می‌شود.</p>
+
+      <div class="flow-secondary-actions">
+        <a href="{% url 'products:product_list' %}" class="flow-back-link">بازگشت به منو</a>
+      </div>
+    </div>
+
+    <aside class="checkout-aside rtl-text" aria-label="خلاصه سفارش">
+      {% include "partials/cart_order_summary.html" %}
+      <div class="order-summary-panel__actions">
+        <a href="{% url 'core:checkout' %}" class="btn btn-primary btn-block checkout-summary-cta">ادامه سفارش و پرداخت</a>
+        <a href="{% url 'products:product_list' %}" class="btn btn-ghost btn-block flow-back-link--secondary">بازگشت به منو</a>
+      </div>
+    </aside>
+
+    <aside class="checkout-total-bar checkout-total-bar--mobile" aria-live="polite">
+      <div class="checkout-total-bar__inner">
+        <div class="checkout-total-bar__meta rtl-text">
+          <span class="checkout-total-bar__label">مجموع</span>
+          <span class="checkout-total-bar__amount">{{ cart.get_subtotal|toman }}</span>
+        </div>
+        <a href="{% url 'core:checkout' %}" class="btn btn-primary checkout-total-bar__cta">ادامه سفارش</a>
+      </div>
+    </aside>
+    {% else %}
+    <div class="checkout-main">
+      <div class="empty-state empty-state--flow rtl-text">
+        <p class="empty-state__eyebrow">سبد خرید</p>
+        <h2 class="empty-state__title">هنوز چیزی انتخاب نکرده‌اید</h2>
+        <p class="empty-state__lead">از منوی کرامبز کوکی، قهوه و بیکری تازه را انتخاب کنید.</p>
+        <a href="{% url 'products:product_list' %}" class="btn btn-primary">مشاهده منو</a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

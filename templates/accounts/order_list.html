@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-account{% endblock %}
+{% block title %}سفارش‌های من{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="flow-hero flow-hero--compact rtl-text">
+  <div class="container flow-hero__inner">
+    <p class="flow-hero__eyebrow">حساب کاربری</p>
+    <h1 class="flow-hero__title">سفارش‌های من</h1>
+    <p class="flow-hero__lead">تاریخچه سفارش‌های کافه را اینجا ببینید.</p>
+  </div>
+</section>
+
+<section class="section account-flow-section">
+  <div class="container account-flow">
+    {% include "partials/account_nav.html" %}
+
+    {% if orders %}
+    <ul class="order-history-list rtl-text" aria-label="لیست سفارش‌ها">
+      {% for order in orders %}
+      <li class="order-history-list__item">
+        <a href="{% url 'accounts:order_detail' order.order_number %}" class="order-history-row">
+          <span class="order-history-row__primary">
+            <span class="order-history-row__label">شماره سفارش</span>
+            <span class="order-history-row__number" dir="ltr">{{ order.order_number }}</span>
+          </span>
+          <span class="order-history-row__field">
+            <span class="order-history-row__label">تاریخ</span>
+            <span class="order-history-row__value">{{ order.created_at|date:"Y/m/d" }}</span>
+          </span>
+          <span class="order-history-row__field">
+            <span class="order-history-row__label">وضعیت</span>
+            <span class="order-history-row__status order-history-row__status--{{ order.status }}">{{ order|fa_order_status }}</span>
+          </span>
+          <span class="order-history-row__field order-history-row__field--amount">
+            <span class="order-history-row__label">مبلغ</span>
+            <span class="order-history-row__value">{{ order.total|toman }}</span>
+          </span>
+          <span class="order-history-row__chevron" aria-hidden="true"></span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-state empty-state--flow rtl-text">
+      <p class="empty-state__eyebrow">سفارش‌ها</p>
+      <h2 class="empty-state__title">هنوز سفارشی ثبت نکرده‌اید.</h2>
+      <p class="empty-state__lead">وقتی اولین سفارش خود را ثبت کنید، جزئیات آن اینجا نمایش داده می‌شود.</p>
+      <a href="{% url 'products:product_list' %}" class="btn btn-primary">مشاهده منو</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

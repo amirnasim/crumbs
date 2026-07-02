@@ -1,0 +1,8 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="{% static 'admin/css/crumbs-admin-rtl.css' %}">
+{% endblock %}

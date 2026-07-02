@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-sm">
+  <div class="container">
+    <h1 class="page-title">{{ title }}</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container account-layout">
+    {% include "partials/account_nav.html" %}
+
+    <div class="account-panel">
+      <form method="post" class="account-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">ذخیره</button>
+        <a href="{% url 'accounts:address_list' %}" class="btn btn-ghost">انصراف</a>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

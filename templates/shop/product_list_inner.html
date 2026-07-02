@@ -1,0 +1,21 @@
+<section class="shop-hero rtl-text">
+  <div class="container shop-hero__inner">
+    <p class="shop-hero__eyebrow">منوی کافه</p>
+    <h1 class="shop-hero__title">منو</h1>
+    <p class="shop-hero__lead">کوکی، قهوه و بیکری تازه — با دقت و عشق آماده می‌شود.</p>
+  </div>
+</section>
+
+<section class="section shop-section cafe-menu" data-default-category="{{ default_slug }}">
+  <div class="container shop-menu__container">
+    {% include "partials/cafe_menu_nav.html" %}
+
+    <div class="menu-panels">
+      {% include "partials/cafe_menu_panel.html" with menu_slug="cookies" menu_label="کوکی" menu_desc="کوکی‌های دست‌ساز و تازه هر روز." is_hero=True default_slug=default_slug products_by_category=products_by_category %}
+      {% include "partials/cafe_menu_panel.html" with menu_slug="coffee" menu_label="قهوه" menu_desc="اسپرسو، دمی و نوشیدنی‌های فصل." is_hero=False default_slug=default_slug products_by_category=products_by_category %}
+      {% include "partials/cafe_menu_panel.html" with menu_slug="food" menu_label="غذا" menu_desc="میان‌وعده و نان‌های تازه برای هر ساعت." is_hero=False default_slug=default_slug products_by_category=products_by_category %}
+      {% include "partials/cafe_menu_panel.html" with menu_slug="salads" menu_label="سالاد" menu_desc="ساده، تازه و فصلی." is_hero=False default_slug=default_slug products_by_category=products_by_category %}
+      {% include "partials/cafe_menu_panel.html" with menu_slug="drinks" menu_label="نوشیدنی" menu_desc="آیس لatte، ماچا و نوشیدنی‌های خانه." is_hero=False default_slug=default_slug products_by_category=products_by_category %}
+    </div>
+  </div>
+</section>

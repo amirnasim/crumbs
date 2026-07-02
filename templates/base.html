@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}{{ seo_meta_description }}{% endblock %}">
+  <meta name="robots" content="{% block meta_robots %}index, follow{% endblock %}">
+  <meta name="theme-color" content="#1F4D40">
+  <link rel="canonical" href="{% block canonical_url %}{{ canonical_url }}{% endblock %}">
+  <title>{% block title %}کرامبز{% endblock %} | {{ SITE_NAME }}</title>
+
+  <meta property="og:locale" content="fa_IR">
+  <meta property="og:site_name" content="{{ SITE_NAME }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{{ seo_og_title }}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ seo_meta_description }}{% endblock %}">
+  <meta property="og:url" content="{% block og_url %}{{ canonical_url }}{% endblock %}">
+  {% block og_image %}
+  <meta property="og:image" content="{{ SITE_URL }}{% static 'img/crumbs-logo.png' %}">
+  <meta property="og:image:alt" content="{{ SITE_NAME }}">
+  {% endblock %}
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block twitter_title %}{{ seo_og_title }}{% endblock %}">
+  <meta name="twitter:description" content="{% block twitter_description %}{{ seo_meta_description }}{% endblock %}">
+  {% block twitter_image %}
+  <meta name="twitter:image" content="{{ SITE_URL }}{% static 'img/crumbs-logo.png' %}">
+  {% endblock %}
+
+  <link rel="icon" href="{% static 'img/crumbs-logo.png' %}" type="image/png">
+  <link rel="apple-touch-icon" href="{% static 'img/crumbs-logo.png' %}">
+
+  {% block preload %}{% endblock %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"></noscript>
+
+  <link rel="stylesheet" href="{% static 'css/crumbs.css' %}">
+  {% block extra_head %}{% endblock %}
+  {% block structured_data %}{% include "partials/structured_data_site.html" %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  {% include "partials/header.html" %}
+  <main id="main-content">
+    {% include "partials/messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include "partials/footer.html" %}
+  <script src="{% static 'js/crumbs.js' %}" defer></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

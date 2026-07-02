@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-product{% endblock %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block og_title %}{{ product.name }} | {{ SITE_NAME }}{% endblock %}
+{% block twitter_title %}{{ product.name }} | {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ product.description|truncatewords:30|striptags }}{% endblock %}
+{% block og_description %}{{ product.description|truncatewords:30|striptags }}{% endblock %}
+{% block twitter_description %}{{ product.description|truncatewords:30|striptags }}{% endblock %}
+{% block og_type %}product{% endblock %}
+{% block og_url %}{{ SITE_URL }}{{ product.get_absolute_url }}{% endblock %}
+{% block canonical_url %}{{ SITE_URL }}{{ product.get_absolute_url }}{% endblock %}
+{% block og_image %}{% if product.image %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}"><meta property="og:image:alt" content="{{ product.name }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block twitter_image %}{% if product.image %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}">{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block structured_data %}{% include "partials/structured_data_product.html" %}{% endblock %}
+
+{% block content %}
+<section class="section product-detail-section">
+  <div class="container product-detail-container">
+    <nav class="breadcrumb rtl-text" aria-label="مسیر دسترسی">
+      <a href="{% url 'products:product_list' %}">منو</a>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <a href="{% url 'products:category' product.category.slug %}">{{ product.category.name }}</a>
+      <span class="breadcrumb-sep" aria-hidden="true">/</span>
+      <span aria-current="page">{{ product.name }}</span>
+    </nav>
+
+    <div class="product-detail-grid">
+      <div class="product-detail-media">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}" width="800" height="1000" decoding="async" fetchpriority="high">
+        {% else %}
+          <div class="product-placeholder product-placeholder-lg" aria-hidden="true">
+            <span>کرامبز</span>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="product-detail-info rtl-text">
+        <p class="product-detail-category">{{ product.category.name }}</p>
+        <h1 class="product-detail-title">{{ product.name }}</h1>
+        <p class="product-detail-price">{{ product.price|toman }}</p>
+        <div class="product-detail-description">{{ product.description|linebreaks }}</div>
+
+        {% if product.ingredients %}
+        <div class="ingredients-block">
+          <h2 class="ingredients-heading">مواد تشکیل‌دهنده</h2>
+          <p class="ingredients-text">{{ product.ingredients }}</p>
+        </div>
+        {% endif %}
+
+        {% if product.is_available %}
+        <form action="{% url 'core:add_to_cart' %}" method="post" class="add-to-cart-form">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.pk }}">
+          <div class="product-detail-purchase">
+            <div class="quantity-control" aria-label="تعداد">
+              <button type="button" class="qty-btn" data-action="decrease" aria-label="کاهش تعداد">−</button>
+              <label for="quantity" class="sr-only">تعداد</label>
+              <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" class="qty-input">
+              <button type="button" class="qty-btn" data-action="increase" aria-label="افزایش تعداد">+</button>
+            </div>
+            <button type="submit" class="btn btn-primary product-detail-add">افزودن به سبد</button>
+          </div>
+        </form>
+        {% else %}
+        <p class="product-unavailable-lg">{{ product|fa_availability }}</p>
+        {% endif %}
+
+        {% if user.is_authenticated %}
+        {% in_wishlist wishlist_product_ids product.pk as wishlisted %}
+        <form action="{% if wishlisted %}{% url 'wishlist:remove' %}{% else %}{% url 'wishlist:add' %}{% endif %}" method="post" class="wishlist-detail-form">
+          {% csrf_token %}
+          <input type="hidden" name="product_id" value="{{ product.pk }}">
+          <input type="hidden" name="next" value="{{ request.path }}">
+          <button type="submit" class="btn btn-ghost wishlist-detail-btn">
+            {% if wishlisted %}حذف از علاقه‌مندی‌ها{% else %}افزودن به علاقه‌مندی‌ها{% endif %}
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if related_products %}
+    <div class="related-products">
+      <h2 class="related-products__title">شاید این‌ها را هم دوست داشته باشید</h2>
+      <div class="product-grid product-grid--related">
+        {% for product in related_products %}
+          {% include "partials/product_card.html" %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

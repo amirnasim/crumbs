@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block title %}رسید {{ order|order_display_number|default:order.order_number }}{% endblock %}
+
+{% block content %}
+<section class="section receipt-page">
+  <div class="container receipt-container rtl-text">
+    <article class="receipt-card">
+      <header class="receipt-header">
+        <h1 class="receipt-cafe-name">{{ SITE_NAME }}</h1>
+        {% if order.daily_sequence %}
+        <p class="receipt-display-number" dir="ltr">{{ order|order_display_number }}</p>
+        {% endif %}
+        <p class="receipt-order-number" dir="ltr">{{ order.order_number }}</p>
+        <p class="receipt-created-at">{{ order.created_at|date:"Y/m/d H:i" }}</p>
+      </header>
+
+      {% if order.notes %}
+      <p class="receipt-note"><span class="meta-label">میز / یادداشت:</span> {{ order.notes }}</p>
+      {% endif %}
+
+      <table class="receipt-items">
+        <thead>
+          <tr>
+            <th>محصول</th>
+            <th>تعداد</th>
+            <th>قیمت</th>
+            <th>جمع</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in order.items.all %}
+          <tr>
+            <td>{{ item.product_name }}</td>
+            <td>{{ item.quantity|fa_num }}</td>
+            <td>{{ item.unit_price|toman }}</td>
+            <td>{{ item.line_total|toman }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="receipt-totals">
+        <div class="summary-item">
+          <span>جمع جزء</span>
+          <span>{{ order.subtotal|toman }}</span>
+        </div>
+        {% if order.discount_amount %}
+        <div class="summary-item">
+          <span>تخفیف</span>
+          <span>{{ order.discount_amount|toman }}</span>
+        </div>
+        {% endif %}
+        {% if order.promotion_discount_amount %}
+        <div class="summary-item">
+          <span>تخفیف پروموشن</span>
+          <span>{{ order.promotion_discount_amount|toman }}</span>
+        </div>
+        {% endif %}
+        <div class="summary-item">
+          <strong>مجموع</strong>
+          <strong>{{ order.total|toman }}</strong>
+        </div>
+        <div class="summary-item">
+          <span>روش پرداخت</span>
+          <span>{{ order|fa_payment_method }}</span>
+        </div>
+      </div>
+
+      <footer class="receipt-actions">
+        <button type="button" class="btn btn-primary" onclick="window.print()">چاپ رسید</button>
+        {% if request.user.is_staff %}
+        <a href="{% url 'admin:orders_order_change' order.pk %}" class="btn btn-ghost">Admin order</a>
+        {% endif %}
+      </footer>
+    </article>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  .receipt-page { padding-top: 2rem; padding-bottom: 2rem; }
+  .receipt-container { max-width: 420px; margin: 0 auto; }
+  .receipt-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+  .receipt-header { text-align: center; margin-bottom: 1rem; }
+  .receipt-cafe-name { font-size: 1.35rem; margin: 0 0 0.5rem; }
+  .receipt-display-number { font-size: 2rem; font-weight: 700; margin: 0.25rem 0; }
+  .receipt-order-number { color: #6b7280; margin: 0; font-size: 0.9rem; }
+  .receipt-created-at { color: #6b7280; margin: 0.35rem 0 0; font-size: 0.85rem; }
+  .receipt-note { margin: 0 0 1rem; }
+  .receipt-items { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.95rem; }
+  .receipt-items th, .receipt-items td { padding: 0.4rem 0.25rem; border-bottom: 1px solid #eee; text-align: right; }
+  .receipt-totals .summary-item { display: flex; justify-content: space-between; padding: 0.25rem 0; }
+  .receipt-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem; }
+  @media print {
+    .receipt-actions, header.site-header, footer.site-footer, .account-nav { display: none !important; }
+    .receipt-card { border: none; box-shadow: none; }
+  }
+</style>
+{% endblock %}

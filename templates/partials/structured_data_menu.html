@@ -1,0 +1,36 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Menu",
+  "name": "منوی {{ SITE_NAME }}",
+  "url": "{{ SITE_URL }}{% url 'products:product_list' %}",
+  "inLanguage": "fa-IR",
+  "hasMenuSection": [
+    {
+      "@type": "MenuSection",
+      "name": "کوکی",
+      "url": "{{ SITE_URL }}{% url 'products:product_list' %}#cookies"
+    },
+    {
+      "@type": "MenuSection",
+      "name": "قهوه",
+      "url": "{{ SITE_URL }}{% url 'products:product_list' %}#coffee"
+    },
+    {
+      "@type": "MenuSection",
+      "name": "غذا",
+      "url": "{{ SITE_URL }}{% url 'products:product_list' %}#food"
+    },
+    {
+      "@type": "MenuSection",
+      "name": "سالاد",
+      "url": "{{ SITE_URL }}{% url 'products:product_list' %}#salads"
+    },
+    {
+      "@type": "MenuSection",
+      "name": "نوشیدنی",
+      "url": "{{ SITE_URL }}{% url 'products:product_list' %}#drinks"
+    }
+  ]
+}
+</script>

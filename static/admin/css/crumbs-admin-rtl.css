@@ -1,0 +1,53 @@
+/* Crumbs — minimal Persian/RTL polish for Django admin (no third-party themes). */
+
+body {
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+}
+
+#header {
+  font-family: inherit;
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+  font-weight: 600;
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+  font-family: inherit;
+}
+
+#changelist-filter h2,
+#changelist-filter h3 {
+  font-family: inherit;
+}
+
+.submit-row input,
+.button,
+input[type="submit"],
+.object-tools a {
+  font-family: inherit;
+}
+
+/* Custom ops dashboards under templates/admin/ */
+.admin-ops,
+.admin-dashboard,
+.kitchen-queue,
+.pickup-screen {
+  direction: rtl;
+  text-align: right;
+  font-family: inherit;
+}
+
+.admin-ops table,
+.admin-dashboard table,
+.kitchen-queue table {
+  direction: rtl;
+}
+
+.paginator {
+  font-family: inherit;
+}

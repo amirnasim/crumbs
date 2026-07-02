@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block body_class %}page-checkout{% endblock %}
+{% block title %}ثبت سفارش{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="flow-hero flow-hero--compact rtl-text">
+  <div class="container flow-hero__inner">
+    <p class="flow-hero__eyebrow">ثبت نهایی</p>
+    <h1 class="flow-hero__title">ثبت سفارش</h1>
+    <p class="flow-hero__lead">سفارش حضوری — پرداخت آنلاین یا در صندوق، تحویل از کانتر.</p>
+  </div>
+</section>
+
+<section class="section checkout-flow-section">
+  <div class="container checkout-layout">
+    {% if not user.is_authenticated %}
+    <p class="checkout-login-hint rtl-text checkout-layout__hint">برای ذخیره سفارش‌ها <a href="{% url 'accounts:login' %}?next={% url 'core:checkout' %}">وارد شوید</a>.</p>
+    {% endif %}
+
+    {% include "partials/checkout_progress.html" with current_step=1 %}
+    {% include "partials/cafe_table_banner.html" %}
+
+    <div class="checkout-flow checkout-main" id="checkout-flow" data-initial-step="1">
+      <form method="post" class="checkout-wizard-form rtl-text" id="checkout-form" novalidate{% if form.errors %} data-has-errors="true"{% endif %}>
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="checkout-form-alert" role="alert">
+          <p>لطفاً اطلاعات سفارش را بررسی کنید.</p>
+        </div>
+        {% endif %}
+
+        <p class="flow-trust-note">اطلاعات سفارش شما فقط برای آماده‌سازی و تحویل از کانتر استفاده می‌شود.</p>
+
+        <div class="checkout-hidden-fields" aria-hidden="true">
+          {{ form.last_name.as_hidden }}
+          {{ form.address_line1.as_hidden }}
+          {{ form.address_line2.as_hidden }}
+          {{ form.city.as_hidden }}
+          {{ form.state.as_hidden }}
+          {{ form.postal_code.as_hidden }}
+          {{ form.country.as_hidden }}
+          {{ form.notes.as_hidden }}
+        </div>
+
+        <div class="checkout-step-panel is-active is-visible" data-checkout-step="1" role="group" aria-label="اطلاعات سفارش">
+          <header class="checkout-step-header">
+            <h2 class="checkout-step-title">اطلاعات سفارش</h2>
+            <p class="checkout-step-desc">نام و شماره تماس خود را وارد کنید تا سفارش در آشپزخانه ثبت شود.</p>
+          </header>
+          <div class="checkout-fields">
+            <div class="form-group form-group--float">
+              <label for="id_first_name" class="form-label">نام</label>
+              {{ form.first_name }}
+              {% if form.first_name.errors %}<p class="checkout-field-error">{{ form.first_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="id_phone" class="form-label">تلفن</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<p class="checkout-field-error">{{ form.phone.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="id_email" class="form-label">ایمیل (اختیاری)</label>
+              {{ form.email }}
+              {% if form.email.errors %}<p class="checkout-field-error">{{ form.email.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="form-group form-group--float">
+              <label for="id_pickup_note" class="form-label">شماره میز یا یادداشت (اختیاری)</label>
+              {{ form.pickup_note }}
+              {% if form.pickup_note.errors %}<p class="checkout-field-error">{{ form.pickup_note.errors.0 }}</p>{% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="checkout-step-panel" data-checkout-step="2" hidden role="group" aria-label="روش پرداخت">
+          <header class="checkout-step-header">
+            <h2 class="checkout-step-title">روش پرداخت</h2>
+            <p class="checkout-step-desc">نحوه پرداخت را انتخاب کنید.</p>
+          </header>
+          <div class="choice-list" role="radiogroup" aria-label="روش پرداخت">
+            <label class="choice-card">
+              <input type="radio" name="payment_method" value="online" class="choice-card__input"{% if form.payment_method.value == "online" or not form.payment_method.value %} checked{% endif %}>
+              <span class="choice-card__content">
+                <span class="choice-card__title">پرداخت آنلاین</span>
+                <span class="choice-card__desc">پرداخت امن با کارت — هدایت به درگاه پرداخت.</span>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="payment_method" value="counter_card" class="choice-card__input"{% if form.payment_method.value == "counter_card" %} checked{% endif %}>
+              <span class="choice-card__content">
+                <span class="choice-card__title">پرداخت با کارت در صندوق</span>
+                <span class="choice-card__desc">سفارش ثبت می‌شود — سپس در صندوق کارت بکشید.</span>
+              </span>
+            </label>
+            <label class="choice-card">
+              <input type="radio" name="payment_method" value="cash" class="choice-card__input"{% if form.payment_method.value == "cash" %} checked{% endif %}>
+              <span class="choice-card__content">
+                <span class="choice-card__title">پرداخت نقدی در صندوق</span>
+                <span class="choice-card__desc">سفارش ثبت می‌شود — سپس در صندوق نقد پرداخت کنید.</span>
+              </span>
+            </label>
+          </div>
+          {% if form.payment_method.errors %}<p class="checkout-field-error">{{ form.payment_method.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div class="checkout-step-panel" data-checkout-step="3" hidden role="group" aria-label="بررسی و ثبت سفارش">
+          <header class="checkout-step-header">
+            <h2 class="checkout-step-title">بررسی و ثبت سفارش</h2>
+            <p class="checkout-step-desc">اقلام و جزئیات را بررسی کنید، سپس سفارش را ثبت کنید.</p>
+          </header>
+
+          <div class="review-blocks">
+            <details class="review-block" open>
+              <summary class="review-block__summary">اقلام سفارش</summary>
+              <ul class="review-items">
+                {% for item in items %}
+                <li class="review-item">
+                  <span>{{ item.quantity|fa_num }}× {{ item.product.name }}</span>
+                  <span>{{ item.line_total|toman }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+            </details>
+            <details class="review-block" open>
+              <summary class="review-block__summary">میز / یادداشت و پرداخت</summary>
+              <dl class="review-dl">
+                <div><dt>نام</dt><dd id="review-name">—</dd></div>
+                <div><dt>تلفن</dt><dd id="review-phone">—</dd></div>
+                <div><dt>میز / یادداشت</dt><dd id="review-note">—</dd></div>
+                <div><dt>روش پرداخت</dt><dd id="review-payment">—</dd></div>
+              </dl>
+            </details>
+          </div>
+
+          <div class="review-total">
+            <div class="review-total__row">
+              <span>جمع جزء</span>
+              <span>{{ cart.get_subtotal|toman }}</span>
+            </div>
+            {% if cart.applied_coupon_code or cart.referral_code %}
+            <div class="review-total__row">
+              <span>تخفیف</span>
+              <span>
+                {% if cart.applied_coupon_code %}کد: {{ cart.applied_coupon_code }}{% endif %}
+                {% if cart.applied_coupon_code and cart.referral_code %} · {% endif %}
+                {% if cart.referral_code %}معرف: {{ cart.referral_code }}{% endif %}
+              </span>
+            </div>
+            {% endif %}
+            <div class="review-total__row review-total__row--grand">
+              <strong>مجموع</strong>
+              <strong>{{ cart.get_subtotal|toman }}</strong>
+            </div>
+          </div>
+
+          <p class="flow-microcopy">پس از ثبت سفارش، وضعیت سفارش از بخش حساب من قابل پیگیری است.</p>
+
+          <button type="submit" class="btn btn-primary btn-block checkout-submit-btn" id="checkout-submit">ثبت سفارش</button>
+        </div>
+
+        <div class="checkout-step-nav" id="checkout-step-nav">
+          <button type="button" class="btn btn-ghost checkout-step-back" id="checkout-back" hidden>بازگشت</button>
+          <button type="button" class="btn btn-primary checkout-step-next" id="checkout-next">ادامه</button>
+        </div>
+      </form>
+    </div>
+
+    <aside class="checkout-aside checkout-aside--summary rtl-text" aria-label="خلاصه سفارش">
+      {% include "partials/cart_order_summary.html" %}
+      <p class="flow-microcopy flow-microcopy--aside">پس از ثبت سفارش، وضعیت سفارش از بخش حساب من قابل پیگیری است.</p>
+    </aside>
+
+    <aside class="checkout-total-bar checkout-total-bar--mobile" id="checkout-mobile-bar" aria-live="polite">
+      <div class="checkout-total-bar__inner">
+        <div class="checkout-total-bar__meta rtl-text">
+          <span class="checkout-total-bar__label">مجموع</span>
+          <span class="checkout-total-bar__amount">{{ cart.get_subtotal|toman }}</span>
+        </div>
+        <button type="button" class="btn btn-primary checkout-total-bar__cta" id="checkout-mobile-next">ادامه</button>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  window.CRUMBS_CHECKOUT_TOTAL = "{{ cart.get_subtotal|toman|escapejs }}";
+</script>
+{% endblock %}

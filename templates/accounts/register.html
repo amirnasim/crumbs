@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}ثبت‌نام{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-sm">
+  <div class="container">
+    <h1 class="page-title">ثبت‌نام</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container content-narrow">
+    <form method="post" class="account-form rtl-text">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {{ field }}
+        {% if field.help_text %}<p class="form-help">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<p class="form-error">{{ field.errors.0 }}</p>{% endif %}
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-primary btn-block">ایجاد حساب</button>
+    </form>
+    <p class="account-alt-link">قبلاً ثبت‌نام کرده‌اید؟ <a href="{% url 'accounts:login' %}">وارد شوید</a></p>
+  </div>
+</section>
+{% endblock %}

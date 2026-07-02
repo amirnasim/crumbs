@@ -1,0 +1,41 @@
+<footer class="site-footer site-footer--premium">
+  <div class="container">
+    <div class="footer-grid footer-grid--premium">
+      <div class="footer-brand">
+        <p class="footer-wordmark ltr-text" lang="en">CRUMBS</p>
+        <p class="footer-tagline">کافه و بیکری دست‌ساز</p>
+      </div>
+
+      <div class="footer-links">
+        <h2 class="footer-heading">ناوبری</h2>
+        <ul>
+          <li><a href="{% url 'core:home' %}">خانه</a></li>
+          <li><a href="{% url 'products:product_list' %}">منو</a></li>
+          <li><a href="{% url 'core:about' %}">درباره ما</a></li>
+          <li><a href="{% url 'core:contact' %}">تماس با ما</a></li>
+          <li><a href="{% url 'careers:careers' %}">همکاری با ما</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links footer-contact">
+        <h2 class="footer-heading">تماس</h2>
+        <ul class="footer-contact-list">
+          <li><a href="tel:+982112345678" class="ltr-text" dir="ltr">021-1234-5678</a></li>
+          <li><span class="rtl-text">بلوار فرمانیه، ساختمان آرتا</span></li>
+          <li><span class="rtl-text">هر روز 07:30 – 22:30</span></li>
+        </ul>
+      </div>
+
+      <div class="footer-links footer-social">
+        <h2 class="footer-heading">شبکه‌های اجتماعی</h2>
+        <ul>
+          <li><a href="https://instagram.com/crumbs.cafe" target="_blank" rel="noopener noreferrer">اینستاگرام</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      {% include "partials/site_credit.html" %}
+    </div>
+  </div>
+</footer>

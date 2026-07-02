@@ -1,0 +1,20 @@
+{% load crumbs_extras %}
+
+{% order_status_timeline order as timeline %}
+
+{% if timeline.banner %}
+<div class="checkout-form-alert" role="status">
+  <p><strong>{{ timeline.banner }}</strong></p>
+  {% if order.status == "awaiting_payment" and order.is_counter_payment %}
+  <p>شماره سفارش: <span dir="ltr">{{ order.order_number }}</span> — مبلغ: {{ order.total|toman }} — روش پرداخت: {{ order.get_payment_method_display }}</p>
+  {% endif %}
+</div>
+{% endif %}
+
+<ol class="order-status-timeline" aria-label="وضعیت سفارش">
+  {% for step in timeline.steps %}
+  <li class="order-status-timeline__step order-status-timeline__step--{{ step.state }}">
+    <span class="order-status-timeline__label">{{ step.label }}</span>
+  </li>
+  {% endfor %}
+</ol>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load crumbs_extras %}
+
+{% block title %}پرداخت امن{% endblock %}
+{% block meta_robots %}noindex, nofollow{% endblock %}
+{% block structured_data %}{% endblock %}
+{% block body_class %}page-redirect{% endblock %}
+
+{% block content %}
+<section class="section redirect-section">
+  <div class="container">
+    <div class="redirect-card fade-in">
+      <div class="redirect-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0110 0v4"/>
+        </svg>
+      </div>
+
+      {% if checkout_url %}
+      <p class="section-eyebrow">پرداخت امن</p>
+      <h1 class="page-title">انتقال به Stripe</h1>
+      <p class="redirect-text">سفارش شما با شماره <strong dir="ltr">{{ order.order_number }}</strong> ثبت شد. برای تکمیل پرداخت به درگاه امن Stripe منتقل می‌شوید.</p>
+      <p class="redirect-meta">مبلغ: <strong>{{ order.total|toman }}</strong></p>
+
+      <div class="redirect-actions">
+        <a href="{{ checkout_url }}" class="btn btn-primary btn-lg" id="stripe-redirect-btn">ادامه پرداخت</a>
+        <p class="redirect-note">اگر به‌صورت خودکار منتقل نشدید، روی دکمه بالا کلیک کنید.</p>
+      </div>
+      {% else %}
+      <p class="section-eyebrow">اطلاعات پرداخت</p>
+      <h1 class="page-title">پرداخت امن</h1>
+      <p class="redirect-text">پس از تسویه حساب، برای تکمیل پرداخت به‌صورت امن به Stripe منتقل می‌شوید. اطلاعات کارت شما در سرورهای ما ذخیره نمی‌شود.</p>
+      <a href="{% url 'core:cart' %}" class="btn btn-primary">بازگشت به سبد</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if checkout_url %}
+<script>
+  setTimeout(function() {
+    window.location.href = "{{ checkout_url|escapejs }}";
+  }, 2500);
+</script>
+{% endif %}
+{% endblock %}

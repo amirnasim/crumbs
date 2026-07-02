@@ -1,0 +1,9 @@
+{# Do not inline form markup here — auto-formatters break Django tags. See partials/careers_application_form.html #}
+{% extends "base.html" %}
+
+{% block body_class %}page-careers{% endblock %}
+{% block title %}همکاری با ما{% endblock %}
+
+{% block content %}
+{% include "partials/careers_application_form.html" %}
+{% endblock %}

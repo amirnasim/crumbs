@@ -1,0 +1,107 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Intelligence Dashboard{% endblock %}
+
+{% block content %}
+<h1>CRUMBS Intelligence Dashboard</h1>
+<p>Data-driven recommendations, demand forecasts, and revenue insights.</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0;">
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>30-day revenue</strong><br>{{ today.revenue }} T
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Checkout conversion</strong><br>{{ today.conversion_funnel.checkout_conversion_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Upsell conversion</strong><br>{{ today.upsell_conversion_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Upsell impressions</strong><br>{{ today.upsell_impressions }}
+  </div>
+</div>
+
+{% if today.bottlenecks %}
+<h2>Conversion Bottlenecks</h2>
+<ul>
+  {% for item in today.bottlenecks %}
+  <li>{{ item }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Best Performing Products (30d)</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead><tr style="background:#222;color:#fff;">
+    <th style="padding:8px;text-align:left;">Product</th>
+    <th style="padding:8px;text-align:left;">Units</th>
+    <th style="padding:8px;text-align:left;">Revenue</th>
+  </tr></thead>
+  <tbody>
+    {% for row in today.best_products %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ row.name }}</td>
+      <td style="padding:8px;">{{ row.units }}</td>
+      <td style="padding:8px;">{{ row.revenue }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">Run daily_product_stats_task to populate.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Demand Forecast (7-day window, top 10)</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead><tr style="background:#222;color:#fff;">
+    <th style="padding:8px;text-align:left;">Product</th>
+    <th style="padding:8px;text-align:left;">Predicted units</th>
+    <th style="padding:8px;text-align:left;">Historical avg</th>
+  </tr></thead>
+  <tbody>
+    {% for f in forecasts %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ f.product.name }}</td>
+      <td style="padding:8px;">{{ f.predicted_units }}</td>
+      <td style="padding:8px;">{{ f.historical_avg }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">No forecasts yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Bake Recommendations</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead><tr style="background:#222;color:#fff;">
+    <th style="padding:8px;text-align:left;">Product</th>
+    <th style="padding:8px;text-align:left;">Suggested bake</th>
+    <th style="padding:8px;text-align:left;">Forecast</th>
+    <th style="padding:8px;text-align:left;">Stock</th>
+    <th style="padding:8px;text-align:left;">Status</th>
+  </tr></thead>
+  <tbody>
+    {% for r in bake_recs %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ r.product.name }}</td>
+      <td style="padding:8px;">{{ r.suggested_bake_qty }}</td>
+      <td style="padding:8px;">{{ r.forecast_demand }}</td>
+      <td style="padding:8px;">{{ r.current_stock }}</td>
+      <td style="padding:8px;">{{ r.status }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="padding:8px;">Run inventory_optimization_task.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Recommendation Slot Effectiveness</h2>
+<ul>
+  {% for slot, data in today.recommendation_slots.items %}
+  <li>{{ slot }}: {{ data.impressions }} impressions, {{ data.conversions }} conversions</li>
+  {% empty %}
+  <li>No upsell impressions tracked yet.</li>
+  {% endfor %}
+</ul>
+
+<p><a href="{% url 'admin:crumbs_growth_panel' %}">Growth Control Panel →</a></p>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}آدرس‌های من{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero-sm">
+  <div class="container">
+    <h1 class="page-title">آدرس‌های من</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container account-layout">
+    {% include "partials/account_nav.html" %}
+
+    <div class="account-panel">
+      <div class="panel-actions">
+        <a href="{% url 'accounts:address_create' %}" class="btn btn-primary btn-sm">افزودن آدرس</a>
+      </div>
+
+      {% if addresses %}
+      <div class="address-list">
+        {% for address in addresses %}
+        <article class="address-card">
+          <div class="address-card-header">
+            <h3>{{ address.label|default:"آدرس" }}{% if address.is_default %} <span class="badge-default">پیش‌فرض</span>{% endif %}</h3>
+          </div>
+          <p class="address-text">
+            {{ address.first_name }} {{ address.last_name }}<br>
+            {{ address.address_line1 }}{% if address.address_line2 %}، {{ address.address_line2 }}{% endif %}<br>
+            {{ address.city }}{% if address.state %}، {{ address.state }}{% endif %} — <span dir="ltr">{{ address.postal_code }}</span><br>
+            {{ address.country }}
+            {% if address.phone %}<br><span dir="ltr">{{ address.phone }}</span>{% endif %}
+          </p>
+          <div class="address-actions">
+            <a href="{% url 'accounts:address_edit' address.pk %}" class="btn btn-ghost btn-sm">ویرایش</a>
+            {% if not address.is_default %}
+            <form method="post" action="{% url 'accounts:address_set_default' address.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-ghost btn-sm">پیش‌فرض</button>
+            </form>
+            {% endif %}
+            <form method="post" action="{% url 'accounts:address_delete' address.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-ghost btn-sm">حذف</button>
+            </form>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <h3>آدرسی ثبت نشده است</h3>
+        <a href="{% url 'accounts:address_create' %}" class="btn btn-primary">افزودن اولین آدرس</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

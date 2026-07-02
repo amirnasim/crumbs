@@ -1,0 +1,60 @@
+{% load static %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "{{ SITE_URL }}/#organization",
+      "name": "Crumbs",
+      "alternateName": "{{ SITE_NAME }}",
+      "url": "{{ SITE_URL }}/",
+      "logo": "{{ SITE_URL }}{% static 'img/crumbs-logo.png' %}",
+      "sameAs": [
+        "https://instagram.com/crumbs.cafe"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "{{ SITE_URL }}/#website",
+      "url": "{{ SITE_URL }}/",
+      "name": "{{ SITE_NAME }}",
+      "inLanguage": "fa-IR",
+      "publisher": { "@id": "{{ SITE_URL }}/#organization" }
+    },
+    {
+      "@type": "Restaurant",
+      "@id": "{{ SITE_URL }}/#restaurant",
+      "name": "{{ SITE_NAME }}",
+      "url": "{{ SITE_URL }}/",
+      "image": "{{ SITE_URL }}{% static 'img/crumbs-logo.png' %}",
+      "telephone": "+982112345678",
+      "servesCuisine": ["Cafe", "Bakery"],
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "بلوار فرمانیه، ساختمان آرتا",
+        "addressLocality": "Tehran",
+        "addressCountry": "IR"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday"
+          ],
+          "opens": "07:30",
+          "closes": "22:30"
+        }
+      ],
+      "parentOrganization": { "@id": "{{ SITE_URL }}/#organization" }
+    }
+  ]
+}
+</script>

@@ -1,0 +1,52 @@
+{% load crumbs_extras %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "منو",
+          "item": "{{ SITE_URL }}{% url 'products:product_list' %}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "{{ product.category.name|escapejs }}",
+          "item": "{{ SITE_URL }}{% url 'products:category' product.category.slug %}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ product.name|escapejs }}"
+        }
+      ]
+    },
+    {
+      "@type": "Product",
+      "name": "{{ product.name|escapejs }}",
+      "description": "{{ product.description|striptags|truncatewords:40|escapejs }}",
+      {% if product.image %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}",{% endif %}
+      "sku": "{{ product.pk }}",
+      "brand": {
+        "@type": "Brand",
+        "name": "Crumbs"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "{{ SITE_URL }}{{ product.get_absolute_url }}",
+        "priceCurrency": "IRR",
+        "price": "{{ product.price }}",
+        "availability": "{% if product.is_available %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+        "seller": {
+          "@type": "Organization",
+          "name": "Crumbs"
+        }
+      }
+    }
+  ]
+}
+</script>

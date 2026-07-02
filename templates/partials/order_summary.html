@@ -1,0 +1,179 @@
+{% load crumbs_extras %}
+
+<section class="order-detail-section" aria-labelledby="order-info-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-info-heading" class="order-detail-section__title">اطلاعات سفارش</h2>
+  </header>
+  <dl class="order-detail-meta">
+    {% if order.daily_sequence %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">شماره روزانه</dt>
+      <dd class="order-detail-meta__value" dir="ltr">{{ order|order_display_number }}</dd>
+    </div>
+    {% endif %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">شماره سفارش</dt>
+      <dd class="order-detail-meta__value" dir="ltr">{{ order.order_number }}</dd>
+    </div>
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">تاریخ ثبت</dt>
+      <dd class="order-detail-meta__value">{{ order.created_at|date:"Y/m/d H:i" }}</dd>
+    </div>
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">وضعیت سفارش</dt>
+      <dd class="order-detail-meta__value">{{ order|fa_order_status }}</dd>
+    </div>
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">وضعیت پرداخت</dt>
+      <dd class="order-detail-meta__value">{{ order|fa_payment_status }}</dd>
+    </div>
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">روش پرداخت</dt>
+      <dd class="order-detail-meta__value">{{ order|fa_payment_method }}</dd>
+    </div>
+    {% if order.is_in_cafe_pickup_order %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">نوع دریافت</dt>
+      <dd class="order-detail-meta__value">{{ order|fa_fulfillment_type }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</section>
+
+<section class="order-detail-section" aria-labelledby="order-customer-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-customer-heading" class="order-detail-section__title">اطلاعات مشتری</h2>
+  </header>
+  <dl class="order-detail-meta">
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">نام</dt>
+      <dd class="order-detail-meta__value">{{ order.full_name }}</dd>
+    </div>
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">تلفن</dt>
+      <dd class="order-detail-meta__value" dir="ltr">{{ order.phone|default:"—" }}</dd>
+    </div>
+    {% if order.email and "@crumbs.local" not in order.email %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">ایمیل</dt>
+      <dd class="order-detail-meta__value" dir="ltr">{{ order.email }}</dd>
+    </div>
+    {% endif %}
+    {% if order.notes %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">میز / یادداشت</dt>
+      <dd class="order-detail-meta__value">{{ order.notes }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</section>
+
+{% if order.has_legacy_delivery_details %}
+<section class="order-detail-section order-detail-section--legacy" aria-labelledby="order-legacy-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-legacy-heading" class="order-detail-section__title">Legacy / Historical</h2>
+    <p class="order-detail-section__note">سفارش قدیمی — فقط برای سوابق.</p>
+  </header>
+  <dl class="order-detail-meta">
+    {% if order.address_line1 %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">Legacy address</dt>
+      <dd class="order-detail-meta__value">{{ order.address_line1 }}</dd>
+    </div>
+    {% endif %}
+    {% if order.city %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">Legacy city</dt>
+      <dd class="order-detail-meta__value">{{ order.city }}</dd>
+    </div>
+    {% endif %}
+    {% if order.postal_code %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">Legacy postal code</dt>
+      <dd class="order-detail-meta__value" dir="ltr">{{ order.postal_code }}</dd>
+    </div>
+    {% endif %}
+    {% if order.delivery_zone %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">Legacy zone</dt>
+      <dd class="order-detail-meta__value">{{ order.delivery_zone }}</dd>
+    </div>
+    {% endif %}
+    {% if order.delivery_fee %}
+    <div class="order-detail-meta__row">
+      <dt class="order-detail-meta__label">Legacy surcharge</dt>
+      <dd class="order-detail-meta__value">{{ order.delivery_fee|toman }}</dd>
+    </div>
+    {% endif %}
+  </dl>
+</section>
+{% endif %}
+
+<section class="order-detail-section" aria-labelledby="order-items-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-items-heading" class="order-detail-section__title">اقلام سفارش</h2>
+  </header>
+  <ul class="order-item-list">
+    {% for item in order.items.all %}
+    <li class="cart-line cart-line--readonly">
+      <div class="cart-line__image">
+        {% if item.product.image %}
+        <img src="{{ item.product.image.url }}" alt="{{ item.product_name }}" width="88" height="110" loading="lazy" decoding="async">
+        {% else %}
+        <div class="product-placeholder" aria-hidden="true"></div>
+        {% endif %}
+      </div>
+      <div class="cart-line__body">
+        <span class="cart-line__name">{{ item.product_name }}</span>
+        <p class="cart-line__meta">
+          <span>تعداد: {{ item.quantity|fa_num }}</span>
+          <span class="cart-line__sep" aria-hidden="true">·</span>
+          <span>{{ item.unit_price|toman }}</span>
+        </p>
+      </div>
+      <div class="cart-line__aside">
+        <p class="cart-line__total">{{ item.line_total|toman }}</p>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="order-detail-section" aria-labelledby="order-totals-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-totals-heading" class="order-detail-section__title">خلاصه مبلغ</h2>
+  </header>
+  <div class="order-detail-totals">
+    <div class="order-detail-totals__row">
+      <span>جمع جزء</span>
+      <span>{{ order.subtotal|toman }}</span>
+    </div>
+    {% if order.discount_amount %}
+    <div class="order-detail-totals__row">
+      <span>تخفیف</span>
+      <span>{{ order.discount_amount|toman }}</span>
+    </div>
+    {% endif %}
+    {% if order.promotion_discount_amount %}
+    <div class="order-detail-totals__row">
+      <span>تخفیف پروموشن</span>
+      <span>{{ order.promotion_discount_amount|toman }}</span>
+    </div>
+    {% endif %}
+    <div class="order-detail-totals__row order-detail-totals__row--grand">
+      <strong>مجموع</strong>
+      <strong>{{ order.total|toman }}</strong>
+    </div>
+  </div>
+</section>
+
+<section class="order-detail-section" aria-labelledby="order-status-heading">
+  <header class="order-detail-section__head">
+    <h2 id="order-status-heading" class="order-detail-section__title">وضعیت سفارش</h2>
+  </header>
+  {% include "partials/order_status_timeline.html" %}
+</section>
+
+<div class="order-detail-actions order-detail-actions--inline">
+  <a href="{% url 'core:order_receipt' order.order_number %}" class="btn btn-ghost btn-sm">مشاهده رسید</a>
+</div>

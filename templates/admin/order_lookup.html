@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+{% load crumbs_extras %}
+
+{% block title %}Order Lookup{% endblock %}
+
+{% block content %}
+<h1>Order Lookup</h1>
+<p>Search cafe orders by order number, phone, customer name, or table/note.</p>
+
+<form method="get" style="margin-bottom:24px;max-width:720px;">
+  <label for="order-lookup-q" style="display:block;margin-bottom:8px;font-weight:600;">Search</label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <input
+      id="order-lookup-q"
+      type="search"
+      name="q"
+      value="{{ query }}"
+      placeholder="Order number, phone, name, table/note"
+      style="flex:1;min-width:240px;padding:8px;"
+    >
+    <button type="submit" class="button default">Search</button>
+    {% if query %}
+    <a href="{% url 'admin:crumbs_order_lookup' %}" class="button">Clear</a>
+    {% endif %}
+  </div>
+</form>
+
+{% if is_search %}
+<p>Showing up to {{ result_limit }} results for <strong>{{ query }}</strong>.</p>
+{% else %}
+<p>Showing {{ order_rows|length }} recent active orders (max {{ result_limit }}).</p>
+{% endif %}
+
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Daily #</th>
+      <th style="padding:8px;text-align:left;">Order</th>
+      <th style="padding:8px;text-align:left;">Customer</th>
+      <th style="padding:8px;text-align:left;">Phone</th>
+      <th style="padding:8px;text-align:left;">Table / Note</th>
+      <th style="padding:8px;text-align:left;">Status</th>
+      <th style="padding:8px;text-align:left;">Payment</th>
+      <th style="padding:8px;text-align:left;">Method</th>
+      <th style="padding:8px;text-align:left;">Total</th>
+      <th style="padding:8px;text-align:left;">Created</th>
+      <th style="padding:8px;text-align:left;">Links</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in order_rows %}
+    {% with order=row.order %}
+    <tr style="border-bottom:1px solid #ddd;vertical-align:top;">
+      <td style="padding:8px;" dir="ltr">{% if order.daily_sequence %}{{ order|order_display_number }}{% else %}—{% endif %}</td>
+      <td style="padding:8px;">{{ order.order_number }}</td>
+      <td style="padding:8px;">{{ order.full_name }}</td>
+      <td style="padding:8px;">{{ order.phone|default:"—" }}</td>
+      <td style="padding:8px;">{{ order.notes|default:"—" }}</td>
+      <td style="padding:8px;">{{ order|fa_order_status }}</td>
+      <td style="padding:8px;">{{ order|fa_payment_status }}</td>
+      <td style="padding:8px;">{{ order|fa_payment_method }}</td>
+      <td style="padding:8px;">{{ order.total }}</td>
+      <td style="padding:8px;">{{ order.created_at }}</td>
+      <td style="padding:8px;">
+        <a href="{% url 'admin:orders_order_change' order.pk %}">Admin order</a>
+        · <a href="{% url 'core:order_receipt' order.order_number %}" target="_blank">Receipt</a>
+        {% if row.show_kitchen_link %}
+        · <a href="{% url 'admin:crumbs_kitchen' %}">Kitchen</a>
+        {% endif %}
+        {% if row.show_pickup_link %}
+        · <a href="{% url 'admin:crumbs_pickup_screen' %}">Pickup</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endwith %}
+    {% empty %}
+    <tr><td colspan="11" style="padding:8px;">No orders found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p style="margin-top:24px;"><a href="{% url 'admin:crumbs_ops' %}">Operations Task Center</a></p>
+{% endblock %}

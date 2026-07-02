@@ -1,0 +1,2 @@
+# Renew Let's Encrypt certificates (add to crontab on VPS)
+# 0 3 * * * cd /opt/crumbs && docker compose -f docker-compose.production.yml --profile certbot run --rm certbot renew && docker compose -f docker-compose.production.yml exec nginx nginx -s reload

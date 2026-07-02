@@ -1,0 +1,32 @@
+{% load crumbs_extras %}
+<article class="product-card product-card--menu">
+  <a href="{{ product.get_absolute_url }}" class="product-card-link" aria-label="{{ product.name }} — {{ product.price|toman }}">
+    <div class="product-card-image">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy" decoding="async" width="400" height="500">
+      {% else %}
+        <div class="product-placeholder" aria-hidden="true"></div>
+      {% endif %}
+    </div>
+    <div class="product-card-body">
+      <h3 class="product-name">{{ product.name }}</h3>
+      {% if product.description %}
+        <p class="product-card-desc">{{ product.description|truncatewords:14 }}</p>
+      {% endif %}
+      <p class="product-price">
+        <span class="product-price-value">{{ product.price|toman }}</span>
+      </p>
+      {% if not product.is_available %}
+        <p class="product-status">{{ product|fa_availability }}</p>
+      {% endif %}
+    </div>
+  </a>
+  {% if product.is_available %}
+    <form action="{% url 'core:add_to_cart' %}" method="post" class="product-card-cart-form">
+      {% csrf_token %}
+      <input type="hidden" name="product_id" value="{{ product.pk }}">
+      <input type="hidden" name="quantity" value="1">
+      <button type="submit" class="btn btn-primary btn-sm product-card-add" aria-label="افزودن {{ product.name }} به سبد">افزودن به سبد</button>
+    </form>
+  {% endif %}
+</article>

@@ -1,0 +1,35 @@
+# Secrets — never bake into image (use env_file at runtime)
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.sqlite3
+db.sqlite3
+
+# Python virtual environments
+venv/
+.venv/
+
+# Python bytecode & caches
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Version control & editor metadata
+.git/
+.gitignore
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime-generated / mounted volumes (not needed in build context)
+media/
+staticfiles/
+logs/
+*.log
+
+# Node (if present locally)
+node_modules/

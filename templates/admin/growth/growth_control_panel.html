@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Growth Control Panel{% endblock %}
+
+{% block content %}
+<h1>Growth & Revenue Control Panel</h1>
+<p>Period: last {{ days }} days</p>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:24px 0;">
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Revenue</strong><br>{{ snapshot.revenue }} T
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Checkout conversion</strong><br>{{ snapshot.checkout_conversion_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>View → Cart</strong><br>{{ snapshot.view_to_cart_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>SMS conversion</strong><br>{{ snapshot.sms_conversion_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Cart abandonment</strong><br>{{ snapshot.cart_abandonment_rate }}%
+  </div>
+  <div style="background:#1a1a1a;color:#f5f0e8;padding:16px;border-radius:8px;">
+    <strong>Repeat customers</strong><br>{{ snapshot.latest_revenue_snapshot.repeat_customer_rate|default:"—" }}%
+  </div>
+</div>
+
+<h2>Coupon Performance</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#222;color:#fff;">
+      <th style="padding:8px;text-align:left;">Coupon</th>
+      <th style="padding:8px;text-align:left;">Orders</th>
+      <th style="padding:8px;text-align:left;">Total discount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in snapshot.coupon_performance %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ row.source_label }}</td>
+      <td style="padding:8px;">{{ row.orders }}</td>
+      <td style="padding:8px;">{{ row.total_discount }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">No coupon redemptions yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Referral Leaderboard</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#222;color:#fff;">
+      <th style="padding:8px;text-align:left;">Referrer</th>
+      <th style="padding:8px;text-align:left;">Referrals</th>
+      <th style="padding:8px;text-align:left;">Points earned</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in snapshot.referral_leaderboard %}
+    <tr style="border-bottom:1px solid #333;">
+      <td style="padding:8px;">{{ row.referrer__first_name }} {{ row.referrer__last_name }} ({{ row.referrer__username }})</td>
+      <td style="padding:8px;">{{ row.referrals }}</td>
+      <td style="padding:8px;">{{ row.points }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="padding:8px;">No referral rewards yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>Conversion Funnel</h2>
+<ul>
+  <li>Product views: {{ snapshot.product_views }}</li>
+  <li>Add to cart: {{ snapshot.add_to_cart }}</li>
+  <li>Checkout starts: {{ snapshot.checkout_starts }}</li>
+  <li>Checkout complete: {{ snapshot.checkout_complete }}</li>
+  <li>SMS sent (tracked): {{ snapshot.sms_sent }}</li>
+  <li>SMS conversions: {{ snapshot.sms_conversions }}</li>
+</ul>
+
+<p><a href="{% url 'admin:crumbs_analytics' %}">Legacy analytics dashboard →</a></p>
+{% endblock %}

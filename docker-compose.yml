@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: crumbs_db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-crumbs}
+      POSTGRES_USER: ${POSTGRES_USER:-crumbs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crumbs}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crumbs} -d ${POSTGRES_DB:-crumbs}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - crumbs_network
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: crumbs_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      DEBUG: "False"
+      POSTGRES_HOST: db
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - crumbs_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  logs_volume:
+
+networks:
+  crumbs_network:
+    driver: bridge

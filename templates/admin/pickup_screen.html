@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% load crumbs_extras %}
+
+{% block title %}Pickup Screen{% endblock %}
+
+{% block content %}
+<h1>Pickup Screen</h1>
+<p>سفارش حضوری — packaged orders waiting for counter pickup. Mark picked up — تحویل شد. Refresh to update.</p>
+
+<h2>Ready for Pickup — آماده تحویل ({{ counts.ready }})</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  <thead>
+    <tr style="background:#417690;color:#fff;">
+      <th style="padding:8px;text-align:left;">Daily #</th>
+      <th style="padding:8px;text-align:left;">Order</th>
+      <th style="padding:8px;text-align:left;">Customer</th>
+      <th style="padding:8px;text-align:left;">Table / Note</th>
+      <th style="padding:8px;text-align:left;">Created</th>
+      <th style="padding:8px;text-align:left;">Items</th>
+      <th style="padding:8px;text-align:left;">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in ready_orders %}
+    <tr style="border-bottom:1px solid #ddd;vertical-align:top;">
+      <td style="padding:8px;" dir="ltr">{% if order.daily_sequence %}{{ order|order_display_number }}{% else %}—{% endif %}</td>
+      <td style="padding:8px;">{{ order.order_number }}</td>
+      <td style="padding:8px;">{{ order.first_name }}</td>
+      <td style="padding:8px;">{{ order.notes|default:"—" }}</td>
+      <td style="padding:8px;">{{ order.created_at }}</td>
+      <td style="padding:8px;">
+        <ul style="margin:0;padding-left:18px;">
+          {% for item in order.items.all %}
+          <li>{{ item.quantity }}× {{ item.product_name }}</li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td style="padding:8px;">
+        <form method="post" action="{% url 'admin:crumbs_pickup_action' %}">
+          {% csrf_token %}
+          <input type="hidden" name="order_id" value="{{ order.pk }}">
+          <input type="hidden" name="action" value="mark_picked_up">
+          <button type="submit" class="button">Mark Picked Up — تحویل شد</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="7" style="padding:8px;">No orders ready for pickup.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p style="margin-top:24px;"><a href="{% url 'admin:crumbs_ops' %}">Operations Task Center</a></p>
+{% endblock %}

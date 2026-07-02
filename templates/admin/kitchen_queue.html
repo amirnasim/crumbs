@@ -1,0 +1,19 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Kitchen Queue{% endblock %}
+
+{% block content %}
+<h1>Kitchen Queue</h1>
+<p>سفارش حضوری — paid in-cafe orders ready for preparation. Mark picked up at the counter — تحویل شد. Refresh to update.</p>
+
+<h2>Waiting to Prepare ({{ counts.waiting }})</h2>
+{% include "admin/partials/kitchen_order_table.html" with orders=waiting_orders action="start_preparing" action_label="Start Preparing" empty_message="No orders waiting to prepare." %}
+
+<h2>Preparing ({{ counts.preparing }})</h2>
+{% include "admin/partials/kitchen_order_table.html" with orders=preparing_orders action="mark_ready" action_label="Mark Ready — آماده تحویل" empty_message="No orders in preparation." %}
+
+<h2>Ready for Pickup — آماده تحویل ({{ counts.ready }})</h2>
+{% include "admin/partials/kitchen_order_table.html" with orders=ready_orders action="mark_completed" action_label="Mark Picked Up — تحویل شد" empty_message="No orders ready for pickup." %}
+
+<p style="margin-top:24px;"><a href="{% url 'admin:crumbs_ops' %}">Operations Task Center</a></p>
+{% endblock %}

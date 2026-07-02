@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body_class %}page-about{% endblock %}
+{% block title %}داستان ما{% endblock %}
+
+{% block content %}
+<section class="page-hero rtl-text">
+  <div class="container">
+    <p class="section-eyebrow">تأسیس ۱۴۰۳</p>
+    <h1 class="page-title">داستان ما</h1>
+    <p class="page-subtitle lead">از عشق به یک کوکی ساده — گرم، صادق و فراموش‌نشدنی.</p>
+  </div>
+</section>
+
+<section class="section rtl-text">
+  <div class="container content-narrow">
+    <div class="prose rtl-text">
+      <h2>آغاز</h2>
+      <p>CRUMBS در یک آشپزخانه کوچک با یک باور ساده شروع شد: کوکی باید یک لحظه خوب باشد. نه فقط یک میان‌وعده. یک تجربه‌ای که ارزش ماندن دارد.</p>
+      <p>ماه‌ها صرف تکمیل خمیر signature خود کردیم — تعادل کره تازه، شکلات باکیفیت و لمس نمک دریایی که هر لقمه را خاص می‌کند.</p>
+
+      <h2>فلسفه کوکی-محور</h2>
+      <p>کوکی‌های signature ما قلب همه کارهای ماست. قهوه و محصولات نانوایی تجربه را تکمیل می‌کنند، اما کوکی همچنان مرکز است — همیشه دست‌ساز، همیشه در batches کوچک.</p>
+
+      <h2>صنعتگری و کیفیت</h2>
+      <p>هر ماده اولیه با دقت انتخاب می‌شود. شکلات خوب، لبنیات تازه و طعم‌دهنده‌های طبیعی. بدون میانبر. فقط کار دست و زمان کافی.</p>
+
+      <blockquote>
+        <p>«ما کوکی نمی‌پزیم. لحظه می‌سازیم.»</p>
+      </blockquote>
+
+      <h2>تجربه CRUMBS</h2>
+      <p>از لحظه باز کردن جعبه تا آخرین crumb در بشقاب، می‌خواهیم هر تعامل گرم و صادق باشد. بسته‌بندی ساده و زیبا. طعم‌هایی که دوست دارید دوباره سفارش دهید.</p>
+    </div>
+    <div class="section-cta">
+      <a href="{% url 'products:product_list' %}" class="btn btn-primary">مشاهده منو</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
