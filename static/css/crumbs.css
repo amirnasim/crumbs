@@ -3404,28 +3404,59 @@ html[dir="rtl"] .filter-link.active {
 }
 
 .order-status-timeline__step {
-  position: relative;
-  padding-right: var(--space-5);
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr);
+  column-gap: 0.75rem;
+  align-items: start;
   font-size: 0.875rem;
+  line-height: var(--leading-ui);
   color: var(--color-text-muted, #888);
 }
 
-.order-status-timeline__step::before {
+.order-status-timeline__marker {
+  position: relative;
+  width: 1.25rem;
+  min-width: 1.25rem;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 0.35em;
+}
+
+.order-status-timeline__marker::before {
   content: "";
-  position: absolute;
-  right: 0;
-  top: 0.45em;
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
   background: var(--color-border, #ddd);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.order-status-timeline__step:not(:last-child) .order-status-timeline__marker::after {
+  content: "";
+  position: absolute;
+  top: calc(0.35em + 0.75rem);
+  bottom: calc(-1 * var(--space-2));
+  width: 2px;
+  background: var(--color-border, #ddd);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.order-status-timeline__label {
+  min-width: 0;
+  text-align: start;
 }
 
 .order-status-timeline__step--complete {
   color: var(--color-text);
 }
 
-.order-status-timeline__step--complete::before {
+.order-status-timeline__step--complete .order-status-timeline__marker::before {
   background: var(--color-success, #2e7d32);
 }
 
@@ -3434,7 +3465,7 @@ html[dir="rtl"] .filter-link.active {
   font-weight: 600;
 }
 
-.order-status-timeline__step--current::before {
+.order-status-timeline__step--current .order-status-timeline__marker::before {
   background: var(--color-accent, #c45c26);
   box-shadow: 0 0 0 3px var(--color-accent-soft, rgba(196, 92, 38, 0.2));
 }
@@ -4519,12 +4550,20 @@ html[dir="rtl"] .filter-link.active {
   .footer-grid--premium { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
 }
 
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: end;
+}
+
 .footer-tagline {
-  color: var(--color-text-muted);
-  font-size: 0.9375rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
   font-weight: var(--weight-light);
   line-height: var(--leading-relaxed);
-  margin-top: var(--space-sm);
+  color: rgba(246, 239, 232, 0.75);
+  white-space: nowrap;
 }
 
 .footer-wordmark {
@@ -4534,12 +4573,13 @@ html[dir="rtl"] .filter-link.active {
   font-weight: var(--weight-medium);
   letter-spacing: 0.24em;
   color: #F6EFE8;
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: end;
 }
 
 .site-footer--premium .footer-tagline {
-  color: rgba(246, 239, 232, 0.82);
-  margin-top: 0.75rem;
-  font-size: 1rem;
+  color: rgba(246, 239, 232, 0.75);
 }
 
 .footer-heading {

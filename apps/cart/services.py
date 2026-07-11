@@ -95,19 +95,20 @@ def _validate_quantity(quantity: int) -> None:
         raise InvalidQuantityError("Quantity must be at least 1.")
 
 
-def _validate_product(product: Product, quantity: int = 1) -> None:
+def _validate_product(product: Product, quantity: int = 1, *, cart: Cart | None = None) -> None:
     if not product.is_available:
         raise ProductUnavailableError(f"{product.name} is not available.")
-    StockService.check_availability(product, quantity)
+    StockService.check_availability(product, quantity, cart=cart)
 
 
+@transaction.atomic
 def add_item(cart: Cart, product: Product, quantity: int = 1) -> CartItem:
     ensure_cart_mutable(cart)
     _validate_quantity(quantity)
 
     item = CartItem.objects.filter(cart=cart, product=product).first()
     new_quantity = quantity if item is None else item.quantity + quantity
-    _validate_product(product, new_quantity)
+    _validate_product(product, new_quantity, cart=cart)
 
     item, created = CartItem.objects.get_or_create(
         cart=cart,
@@ -121,10 +122,11 @@ def add_item(cart: Cart, product: Product, quantity: int = 1) -> CartItem:
     return item
 
 
+@transaction.atomic
 def set_item_quantity(cart: Cart, product: Product, quantity: int) -> CartItem | None:
     ensure_cart_mutable(cart)
     _validate_quantity(quantity)
-    _validate_product(product, quantity)
+    _validate_product(product, quantity, cart=cart)
 
     item, _ = CartItem.objects.get_or_create(
         cart=cart,

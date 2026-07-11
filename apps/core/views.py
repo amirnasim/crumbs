@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,7 +7,12 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from accounts.services import get_checkout_initial
-from cart.exceptions import InvalidQuantityError, ProductUnavailableError
+from cart.exceptions import (
+    CartMutationBlocked,
+    InvalidQuantityError,
+    ProductUnavailableError,
+    cart_user_error_message,
+)
 from cart.services import add_item, get_or_create_cart, remove_item, set_item_quantity
 from core.checkout_access import grant_checkout_order_access
 from core.table_session import get_checkout_table_initial, sync_table_from_pickup_note
@@ -15,7 +22,19 @@ from delivery.services import process_checkout
 from orders.exceptions import CheckoutError, EmptyCartError
 from orders.models import Order
 from orders.services.counter_checkout import process_counter_checkout
+from inventory.exceptions import CapacityExceededError, InsufficientStockError
 from products.models import Category, Product
+
+logger = logging.getLogger(__name__)
+
+_CART_EXPECTED_ERRORS = (
+    ValueError,
+    ProductUnavailableError,
+    InvalidQuantityError,
+    InsufficientStockError,
+    CapacityExceededError,
+    CartMutationBlocked,
+)
 
 COUNTER_PAYMENT_MESSAGE = "سفارش ثبت شد. لطفاً برای پرداخت به صندوق مراجعه کنید."
 COUNTER_CASH_MESSAGE = COUNTER_PAYMENT_MESSAGE
@@ -168,8 +187,14 @@ def product_detail(request, category_slug, slug):
 @require_POST
 def add_to_cart(request):
     product = get_object_or_404(Product, pk=request.POST.get("product_id"))
-    quantity = int(request.POST.get("quantity", 1))
     cart = _get_cart(request)
+
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+    except (TypeError, ValueError):
+        messages.error(request, cart_user_error_message(ValueError()))
+        next_url = request.POST.get("next") or product.get_absolute_url()
+        return HttpResponseRedirect(next_url)
 
     try:
         from growth.models import GrowthEvent
@@ -177,8 +202,19 @@ def add_to_cart(request):
         add_item(cart, product, quantity)
         _track_conversion(GrowthEvent.EventType.ADD_TO_CART, request, product=product, cart=cart)
         messages.success(request, f"«{product.name}» به سبد خرید اضافه شد.")
-    except (ProductUnavailableError, InvalidQuantityError) as exc:
-        messages.error(request, str(exc))
+    except _CART_EXPECTED_ERRORS as exc:
+        messages.error(request, cart_user_error_message(exc))
+    except Exception:
+        logger.exception(
+            "Unexpected add-to-cart failure",
+            extra={
+                "cart_id": cart.pk,
+                "product_id": product.pk,
+                "previous_quantity": None,
+                "requested_quantity": quantity,
+            },
+        )
+        raise
 
     next_url = request.POST.get("next") or product.get_absolute_url()
     return HttpResponseRedirect(next_url)
@@ -199,19 +235,34 @@ def cart_view(request):
             return redirect("core:cart")
 
         if action == "update":
+            update_errors = False
             for item in items:
                 quantity = request.POST.get(f"quantity_{item.pk}")
                 if quantity is None:
                     continue
+                previous_quantity = item.quantity
                 try:
                     qty = int(quantity)
                     if qty <= 0:
                         remove_item(cart, item.product)
                     else:
                         set_item_quantity(cart, item.product, qty)
-                except (ValueError, ProductUnavailableError, InvalidQuantityError) as exc:
-                    messages.error(request, str(exc))
-            messages.success(request, "سبد خرید بروزرسانی شد.")
+                except _CART_EXPECTED_ERRORS as exc:
+                    update_errors = True
+                    messages.error(request, cart_user_error_message(exc))
+                except Exception:
+                    logger.exception(
+                        "Unexpected cart quantity update failure",
+                        extra={
+                            "cart_id": cart.pk,
+                            "product_id": item.product_id,
+                            "previous_quantity": previous_quantity,
+                            "requested_quantity": quantity,
+                        },
+                    )
+                    raise
+            if not update_errors:
+                messages.success(request, "سبد خرید بروزرسانی شد.")
             return redirect("core:cart")
 
     items = cart.items.select_related("product", "product__category")

@@ -1,6 +1,10 @@
 """Customer order status timeline mapping and display."""
 
+import re
+from pathlib import Path
+
 import pytest
+from django.conf import settings
 from django.test import Client
 from django.urls import reverse
 
@@ -103,6 +107,70 @@ def test_timeline_has_four_persian_steps():
 @pytest.fixture
 def client():
     return Client()
+
+
+def _timeline_section(html: str) -> str:
+    start = html.index('class="order-status-timeline"')
+    end = html.index("</ol>", start)
+    return html[start:end]
+
+
+@pytest.mark.django_db
+class TestOrderStatusTimelineLayout:
+    def test_timeline_css_uses_grid_marker_column(self):
+        css_path = Path(settings.BASE_DIR) / "static" / "css" / "crumbs.css"
+        css = css_path.read_text(encoding="utf-8")
+
+        assert ".order-status-timeline__step {" in css
+        assert "grid-template-columns: 1.25rem minmax(0, 1fr)" in css
+        assert "column-gap: 0.75rem" in css
+        assert ".order-status-timeline__marker" in css
+        assert ".order-status-timeline__label" in css
+        assert ".order-status-timeline__step::before" not in css
+        assert "padding-right: var(--space-5)" not in re.search(
+            r"\.order-status-timeline__step\s*\{[^}]+\}",
+            css,
+            re.DOTALL,
+        ).group(0)
+
+    def test_confirmation_timeline_has_marker_and_label_columns(self, client, product):
+        user = create_user(username="layout-confirm")
+        order = create_order(
+            user,
+            product,
+            status=Order.Status.PACKAGED,
+            payment_status=Order.PaymentStatus.PAID,
+        )
+        session = client.session
+        session["checkout_order_access"] = [order.order_number]
+        session.save()
+
+        response = client.get(reverse("core:order_confirmation", args=[order.order_number]))
+        timeline = _timeline_section(response.content.decode())
+
+        assert response.status_code == 200
+        assert timeline.count("order-status-timeline__marker") == 4
+        assert timeline.count("order-status-timeline__label") == 4
+        assert 'order-status-timeline__step--' in timeline
+        assert "position: absolute" not in timeline
+
+    def test_order_detail_timeline_has_marker_and_label_columns(self, client, product):
+        user = create_user(username="layout-detail")
+        order = create_order(
+            user,
+            product,
+            status=Order.Status.CONFIRMED_BY_SHOP,
+            payment_status=Order.PaymentStatus.PAID,
+        )
+        client.force_login(user)
+
+        response = client.get(reverse("accounts:order_detail", args=[order.order_number]))
+        timeline = _timeline_section(response.content.decode())
+
+        assert response.status_code == 200
+        assert timeline.count("order-status-timeline__marker") == 4
+        assert timeline.count("order-status-timeline__label") == 4
+        assert "در حال آماده‌سازی" in timeline
 
 
 @pytest.mark.django_db

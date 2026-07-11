@@ -2,7 +2,7 @@ from datetime import date, timedelta
 
 from django.conf import settings
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Sum
 from django.utils import timezone
 
 from inventory.exceptions import CapacityExceededError, InsufficientStockError
@@ -20,7 +20,7 @@ def get_available_quantity(product: Product) -> int:
     return inventory.available_quantity
 
 
-def check_cart_availability(product: Product, quantity: int) -> None:
+def check_cart_availability(product: Product, quantity: int, *, cart=None) -> None:
     if not product.is_available:
         raise InsufficientStockError(f"{product.name} is not available.")
 
@@ -28,9 +28,21 @@ def check_cart_availability(product: Product, quantity: int) -> None:
     if not inventory.track_stock:
         return
 
-    if quantity > inventory.available_quantity:
+    available = inventory.available_quantity
+    if cart is not None:
+        cart_reserved = (
+            StockReservation.objects.filter(
+                cart=cart,
+                product=product,
+                status=StockReservation.Status.ACTIVE,
+            ).aggregate(total=Sum("quantity"))["total"]
+            or 0
+        )
+        available += cart_reserved
+
+    if quantity > available:
         raise InsufficientStockError(
-            f"Only {inventory.available_quantity} units of {product.name} are available."
+            f"Only {available} units of {product.name} are available."
         )
 
 

@@ -69,6 +69,53 @@ class TestCartInCafeUX:
         for term in FORBIDDEN_CART_CHECKOUT_TERMS:
             assert term not in content
 
+    def test_cart_quantity_update_sets_exact_quantity(self, client, user, product):
+        cart = create_cart_with_item(user, product, quantity=1)
+        item = cart.items.get()
+        client.force_login(user)
+
+        for expected in (2, 3, 4, 5):
+            response = client.post(
+                reverse("core:cart"),
+                {"action": "update", f"quantity_{item.pk}": str(expected)},
+            )
+            assert response.status_code == 302
+            item.refresh_from_db()
+            assert item.quantity == expected
+
+        for expected in (4, 3, 2, 1):
+            response = client.post(
+                reverse("core:cart"),
+                {"action": "update", f"quantity_{item.pk}": str(expected)},
+            )
+            assert response.status_code == 302
+            item.refresh_from_db()
+            assert item.quantity == expected
+
+    def test_cart_quantity_zero_removes_item(self, client, user, product):
+        cart = create_cart_with_item(user, product, quantity=2)
+        item = cart.items.get()
+        client.force_login(user)
+
+        response = client.post(
+            reverse("core:cart"),
+            {"action": "update", f"quantity_{item.pk}": "0"},
+        )
+
+        assert response.status_code == 302
+        assert cart.items.count() == 0
+
+    def test_cart_js_skips_generic_qty_handler_for_cart_forms(self):
+        from pathlib import Path
+
+        from django.conf import settings
+
+        js_path = Path(settings.BASE_DIR) / "static" / "js" / "crumbs.js"
+        source = js_path.read_text(encoding="utf-8")
+
+        assert 'control.closest(".cart-line__qty-form")' in source
+        assert "initCartQtyControls" in source
+
     def test_cart_page_has_no_checkout_wizard_steps(self, client, user, product):
         create_cart_with_item(user, product)
         client.force_login(user)

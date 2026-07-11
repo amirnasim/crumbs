@@ -104,9 +104,43 @@ def test_premium_footer_uses_text_wordmark_only(client):
     footer = content[footer_start:]
 
     assert "footer-wordmark" in footer
+    assert "footer-tagline" in footer
+    assert "کافه و بیکری دست‌ساز" in footer
+    assert '<h2 class="footer-wordmark"' in footer
+    assert '<p class="footer-tagline">' in footer
     assert "crumbs-logo.png" not in footer
     assert "Designed by Amirhossein Nasimi" in footer
     assert "Crumbs · Tehran" in footer
+
+
+@pytest.mark.django_db
+def test_footer_brand_block_css_hierarchy():
+    from pathlib import Path
+
+    from django.conf import settings
+
+    css_path = Path(settings.BASE_DIR) / "static" / "css" / "crumbs.css"
+    css = css_path.read_text(encoding="utf-8")
+
+    assert ".footer-brand {" in css
+    assert "align-items: flex-end" in css
+    assert ".footer-tagline {" in css
+    tagline_block = css[css.index(".footer-tagline {") : css.index(".footer-wordmark {")]
+    assert "0.8125rem" in tagline_block
+    assert "var(--weight-light)" in tagline_block
+    assert "0.75)" in tagline_block
+    wordmark_block = css[css.index(".footer-wordmark {") : css.index(".site-footer--premium .footer-tagline")]
+    assert "0.875rem" in wordmark_block
+
+
+@pytest.mark.django_db
+def test_about_page_shows_establishment_year(client):
+    response = client.get(reverse("core:about"))
+    content = response.content.decode()
+
+    assert response.status_code == 200
+    assert "تأسیس ۱۴۰۵" in content
+    assert "تأسیس ۱۴۰۳" not in content
 
 
 @pytest.mark.django_db

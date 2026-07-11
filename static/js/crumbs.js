@@ -119,8 +119,10 @@
     window.addEventListener("hashchange", updateActive);
   }
 
-  // Quantity controls on product detail
+  // Quantity controls on product detail (cart has its own handler in initCartQtyControls)
   document.querySelectorAll(".quantity-control").forEach(function (control) {
+    if (control.closest(".cart-line__qty-form")) return;
+
     var input = control.querySelector(".qty-input");
     if (!input) return;
 
