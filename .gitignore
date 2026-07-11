@@ -45,3 +45,6 @@ postgres_data/
 .coverage
 htmlcov/
 .pytest_cache/
+
+# User uploaded media
+media/
