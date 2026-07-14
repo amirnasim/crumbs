@@ -71,8 +71,10 @@ class TestCheckoutDeliveryWordingRemoved:
         assert response.status_code == 200
         assert "سفارش حضوری" in content
         assert "پرداخت آنلاین" in content
-        assert "پرداخت با کارت در صندوق" in content
-        assert "پرداخت نقدی در صندوق" in content
+        assert "پرداخت حضوری" in content
+        assert "پرداخت هنگام تحویل سفارش (نقدی یا کارت)" in content
+        assert "پرداخت با کارت در صندوق" not in content
+        assert "پرداخت نقدی در صندوق" not in content
         for term in FORBIDDEN_CHECKOUT_TERMS:
             assert term not in content
         assert "شهر" not in content

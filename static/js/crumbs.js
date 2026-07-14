@@ -379,8 +379,8 @@
 
     var paymentLabels = {
       online: "پرداخت آنلاین",
-      counter_card: "پرداخت با کارت در صندوق",
-      cash: "پرداخت نقدی در صندوق",
+      counter_card: "پرداخت حضوری",
+      cash: "پرداخت حضوری",
     };
 
     if (country && !country.value) {

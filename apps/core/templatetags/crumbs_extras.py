@@ -48,8 +48,8 @@ ORDER_STATUS_FA = {
 
 PAYMENT_METHOD_FA = {
     "online": "پرداخت آنلاین",
-    "cash": "پرداخت نقدی در صندوق",
-    "counter_card": "پرداخت با کارت در صندوق",
+    "cash": "پرداخت حضوری",
+    "counter_card": "پرداخت حضوری",
     "cod": "پرداخت در محل (قدیمی)",
 }
 

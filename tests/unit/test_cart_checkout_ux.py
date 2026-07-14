@@ -38,6 +38,11 @@ CAFE_CHECKOUT_STEPS = (
 
 CAFE_PAYMENT_LABELS = (
     "پرداخت آنلاین",
+    "پرداخت حضوری",
+    "پرداخت هنگام تحویل سفارش (نقدی یا کارت)",
+)
+
+OLD_PAYMENT_LABELS = (
     "پرداخت با کارت در صندوق",
     "پرداخت نقدی در صندوق",
 )
@@ -175,6 +180,9 @@ class TestCheckoutInCafeUX:
 
         for label in CAFE_PAYMENT_LABELS:
             assert label in content
+        for label in OLD_PAYMENT_LABELS:
+            assert label not in content
+        assert content.count('name="payment_method"') == 2
 
     def test_checkout_review_does_not_show_delivery_fee_or_address(self, client, user, product):
         create_cart_with_item(user, product)

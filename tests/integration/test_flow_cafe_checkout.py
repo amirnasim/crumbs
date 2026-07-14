@@ -60,20 +60,17 @@ class TestCafeCheckoutUI:
         assert Cart.objects.get(user=user).items.count() == 0
 
     @override_settings(**STRIPE_ONLINE_SETTINGS)
-    def test_counter_card_checkout_creates_awaiting_payment_order(
+    def test_counter_card_is_not_a_public_checkout_choice(
         self, client, user, product, mock_stripe_checkout
     ):
         client.force_login(user)
         response = _post_checkout(client, user, product, payment_method=Order.PaymentMethod.COUNTER_CARD)
 
-        assert response.status_code == 302
-        order = Order.objects.get(user=user)
-        assert order.status == Order.Status.AWAITING_PAYMENT
-        assert order.payment_method == Order.PaymentMethod.COUNTER_CARD
-        assert order.payments.filter(
-            provider=Payment.Provider.COUNTER_CARD,
-            status=Payment.Status.PENDING,
-        ).exists()
+        assert response.status_code == 200
+        assert not Order.objects.filter(user=user).exists()
+        content = response.content.decode()
+        assert "پرداخت حضوری" in content
+        assert "پرداخت با کارت در صندوق" not in content
 
     @override_settings(**STRIPE_ONLINE_SETTINGS)
     def test_online_checkout_uses_gateway_flow(self, client, user, product, mock_stripe_checkout):
@@ -154,7 +151,7 @@ class TestCafeCheckoutUI:
         self, client, user, product, mock_stripe_checkout
     ):
         client.force_login(user)
-        _post_checkout(client, user, product, payment_method=Order.PaymentMethod.COUNTER_CARD)
+        _post_checkout(client, user, product, payment_method=Order.PaymentMethod.CASH)
         order = Order.objects.get(user=user)
 
         response = client.get(reverse("accounts:order_detail", args=[order.order_number]))

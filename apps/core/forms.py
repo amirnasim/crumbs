@@ -5,13 +5,11 @@ from orders.models import Order
 
 class CheckoutForm(forms.Form):
     PAYMENT_ONLINE = Order.PaymentMethod.ONLINE
-    PAYMENT_COUNTER_CARD = Order.PaymentMethod.COUNTER_CARD
     PAYMENT_CASH = Order.PaymentMethod.CASH
 
     PAYMENT_CHOICES = (
         (PAYMENT_ONLINE, "پرداخت آنلاین"),
-        (PAYMENT_COUNTER_CARD, "پرداخت با کارت در صندوق"),
-        (PAYMENT_CASH, "پرداخت نقدی در صندوق"),
+        (PAYMENT_CASH, "پرداخت حضوری"),
     )
 
     first_name = forms.CharField(

@@ -90,17 +90,10 @@
               </span>
             </label>
             <label class="choice-card">
-              <input type="radio" name="payment_method" value="counter_card" class="choice-card__input"{% if form.payment_method.value == "counter_card" %} checked{% endif %}>
-              <span class="choice-card__content">
-                <span class="choice-card__title">پرداخت با کارت در صندوق</span>
-                <span class="choice-card__desc">سفارش ثبت می‌شود — سپس در صندوق کارت بکشید.</span>
-              </span>
-            </label>
-            <label class="choice-card">
               <input type="radio" name="payment_method" value="cash" class="choice-card__input"{% if form.payment_method.value == "cash" %} checked{% endif %}>
               <span class="choice-card__content">
-                <span class="choice-card__title">پرداخت نقدی در صندوق</span>
-                <span class="choice-card__desc">سفارش ثبت می‌شود — سپس در صندوق نقد پرداخت کنید.</span>
+                <span class="choice-card__title">پرداخت حضوری</span>
+                <span class="choice-card__desc">پرداخت هنگام تحویل سفارش (نقدی یا کارت)</span>
               </span>
             </label>
           </div>
