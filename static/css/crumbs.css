@@ -487,6 +487,10 @@ a {
   display: none;
 }
 
+.header-utility {
+  display: none;
+}
+
 .header-nav__list {
   display: flex;
   align-items: center;
@@ -518,6 +522,39 @@ a {
 .header-nav__link.is-active {
   color: var(--color-header-on-brand);
   opacity: 0.72;
+}
+
+.header-desktop-cart {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-persian);
+  font-size: 0.9375rem;
+  font-weight: var(--weight-regular);
+  line-height: 1.4;
+  color: var(--color-header-on-brand);
+  text-decoration: none;
+  white-space: nowrap;
+  opacity: 0.86;
+  transition:
+    color var(--motion-base) var(--motion-ease),
+    opacity var(--motion-base) var(--motion-ease);
+}
+
+.header-desktop-cart:hover,
+.header-desktop-cart:focus-visible {
+  color: var(--color-header-on-brand-muted);
+  opacity: 1;
+}
+
+.header-desktop-cart:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+.header-desktop-cart__count {
+  display: inline-block;
+  letter-spacing: 0.02em;
 }
 
 .brand-wordmark {
@@ -698,7 +735,7 @@ a {
 @media (min-width: 900px) {
   .header-inner {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: minmax(9rem, 1fr) minmax(0, auto) minmax(9rem, 1fr);
     align-items: center;
     padding-inline: var(--space-4);
   }
@@ -721,7 +758,15 @@ a {
     display: block;
     grid-column: 2;
     justify-self: center;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .header-utility {
+    display: flex;
+    grid-column: 3;
+    justify-self: end;
+    align-items: center;
   }
 
   .nav-toggle {
@@ -1624,8 +1669,14 @@ html.drawer-open .nav-toggle {
   color: var(--color-white);
 }
 
+.page-home .site-header:not(.is-scrolled) .header-desktop-cart {
+  color: var(--color-white);
+}
+
 .page-home .site-header:not(.is-scrolled) .header-nav__link:hover,
-.page-home .site-header:not(.is-scrolled) .header-nav__link:focus-visible {
+.page-home .site-header:not(.is-scrolled) .header-nav__link:focus-visible,
+.page-home .site-header:not(.is-scrolled) .header-desktop-cart:hover,
+.page-home .site-header:not(.is-scrolled) .header-desktop-cart:focus-visible {
   color: var(--color-header-home-link-muted);
 }
 

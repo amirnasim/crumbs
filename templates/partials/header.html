@@ -33,6 +33,12 @@
         {% endif %}
       </ul>
     </nav>
+
+    <div class="header-utility" aria-label="ابزارهای سربرگ">
+      <a href="{% url 'core:cart' %}" class="header-desktop-cart rtl-text" aria-label="سبد خرید">
+        سبد خرید <span class="header-desktop-cart__count ltr-text" dir="ltr">({{ cart_item_count }})</span>
+      </a>
+    </div>
   </div>
 </header>
 

@@ -1,7 +1,10 @@
 """Public storefront UI — branding, navigation, and layout polish."""
 
 import pytest
+from django.conf import settings
 from django.urls import reverse
+
+from tests.factories import create_cart_with_item
 
 
 PUBLIC_PAGES = (
@@ -38,6 +41,44 @@ def test_mobile_header_shows_cart_count(client):
     assert "header-cart-count" in content
     assert "header-cart-count__value" in content
     assert "(0)" in content
+    assert "header-desktop-cart" in content
+
+
+@pytest.mark.django_db
+def test_desktop_header_has_cart_link_with_named_route(client):
+    content = client.get(reverse("core:home")).content.decode()
+    header = content[content.index('id="site-header"') : content.index("</header>")]
+
+    assert 'class="header-desktop-cart rtl-text"' in header
+    assert f'href="{reverse("core:cart")}"' in header
+    assert "سبد خرید" in header
+    assert '<span class="header-desktop-cart__count ltr-text" dir="ltr">(0)</span>' in header
+    assert 'data-nav="/cart"' not in header
+
+
+@pytest.mark.django_db
+def test_desktop_header_cart_count_is_dynamic(client, user, product):
+    create_cart_with_item(user, product, quantity=2)
+    client.force_login(user)
+
+    content = client.get(reverse("core:home")).content.decode()
+    header = content[content.index('id="site-header"') : content.index("</header>")]
+
+    assert '<span class="header-desktop-cart__count ltr-text" dir="ltr">(2)</span>' in header
+    assert '<span class="header-cart-count__value ltr-text" dir="ltr">(2)</span>' in header
+
+
+@pytest.mark.django_db
+def test_desktop_cart_link_is_hidden_until_desktop_breakpoint():
+    css_path = settings.BASE_DIR / "static" / "css" / "crumbs.css"
+    css = css_path.read_text(encoding="utf-8")
+
+    assert ".header-utility {\n  display: none;\n}" in css
+    assert "@media (min-width: 900px)" in css
+    desktop_media = css[css.index("@media (min-width: 900px)") :]
+    assert "grid-template-columns: minmax(9rem, 1fr) minmax(0, auto) minmax(9rem, 1fr)" in desktop_media
+    assert ".header-utility {\n    display: flex;" in desktop_media
+    assert ".header-cart-count {\n    display: inline-flex;" in css
 
 
 @pytest.mark.django_db
