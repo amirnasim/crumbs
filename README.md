@@ -86,7 +86,7 @@ Crumbs یک سامانه تحت وب برای سفارش‌گیری، پرداخ
 | Frontend | HTML، CSS، JavaScript |
 | Payments | Zarinpal، Stripe |
 | Messaging | Kavenegar، Console SMS Provider |
-| Static / Media | Django staticfiles، WhiteNoise، Nginx static/media serving |
+| Static / Media | Django staticfiles، WhiteNoise، Nginx `static/media` serving |
 | Observability | Django logging، Sentry، health/readiness endpoints |
 | Deployment | Docker، Docker Compose |
 | Testing | pytest، Django test client |
@@ -101,30 +101,30 @@ Crumbs یک سامانه تحت وب برای سفارش‌گیری، پرداخ
 | اپلیکیشن | مسئولیت |
 | --- | --- |
 | `accounts` | پروفایل مشتری، آدرس‌ها، ورود/ثبت‌نام، حساب کاربری و سفارش‌های کاربر |
-| `cart` | سبد خرید، اقلام سبد، محاسبه جمع، ادغام سبد و کنترل تغییرات سبد در جریان checkout |
+| `cart` | سبد خرید، اقلام سبد، محاسبه جمع، ادغام سبد و کنترل تغییرات سبد در جریان `checkout` |
 | `careers` | فرم درخواست همکاری، موقعیت‌های شغلی، اعتبارسنجی رزومه و مدیریت درخواست‌های استخدام |
-| `core` | صفحات عمومی، checkout، هدر/فوتر، SEO، health checks، داشبوردهای عملیاتی، context processors، برچسب‌های فارسی و ابزارهای مشترک |
-| `delivery` | داده‌های legacy ارسال، وضعیت سفارش، لاگ تغییر وضعیت و سرویس‌های مربوط به checkout/fulfillment |
-| `growth` | کوپن‌ها، معرف، پروموشن‌ها، رویدادهای رشد، سبد رهاشده، CLV و تحلیل درآمد |
+| `core` | صفحات عمومی، `checkout`، هدر/فوتر، SEO، health checks، داشبوردهای عملیاتی، `context processors`، برچسب‌های فارسی و ابزارهای مشترک |
+| `delivery` | داده‌های `legacy` ارسال، وضعیت سفارش، لاگ تغییر وضعیت و سرویس‌های مربوط به `checkout/fulfillment` |
+| `growth` | کوپن‌ها، معرف، پروموشن‌ها، رویدادهای رشد، سبد رهاشده، `CLV` و تحلیل درآمد |
 | `intelligence` | متادیتای هوش محصول، خرید همزمان، آمار روزانه، پیش‌بینی تقاضا، توصیه پخت، پروفایل هوشمند مشتری و پیشنهاد فروش |
 | `inventory` | موجودی محصول، ظرفیت تولید روزانه، رزرو موجودی، آزادسازی رزرو و کنترل موجودی قابل فروش |
 | `loyalty` | حساب وفاداری، امتیاز مشتری، سطح‌بندی و تراکنش‌های امتیاز |
-| `orders` | مدل سفارش، اقلام سفارش، وضعیت سفارش، شماره روزانه، ایجاد سفارش و checkout حضوری |
-| `payments` | پرداخت‌ها، رویدادهای پرداخت، Providerها، callbackها و سرویس‌های دریافت/تأیید پرداخت |
+| `orders` | مدل سفارش، اقلام سفارش، وضعیت سفارش، شماره روزانه، ایجاد سفارش و `checkout` حضوری |
+| `payments` | پرداخت‌ها، رویدادهای پرداخت، `Provider`ها، `callback`ها و سرویس‌های دریافت/تأیید پرداخت |
 | `products` | دسته‌بندی، محصول، قیمت، تصویر، وضعیت موجودی و مسیرهای فروشگاه |
 | `wishlist` | علاقه‌مندی‌های کاربران و ارتباط کاربر با محصولات ذخیره‌شده |
-| `notifications` | قالب‌های پیامک، لاگ پیامک، Providerها و ارسال/پیگیری پیام‌ها |
+| `notifications` | قالب‌های پیامک، لاگ پیامک، `Provider`ها و ارسال/پیگیری پیام‌ها |
 
 پوشه‌های مهم دیگر:
 
 | مسیر | توضیح |
 | --- | --- |
-| `config` | تنظیمات Django، URLهای اصلی، ASGI/WSGI و Celery |
-| `templates` | قالب‌های HTML عمومی، حساب کاربری، checkout، سفارش و ادمین سفارشی |
+| `config` | تنظیمات Django، `URL`های اصلی، ASGI/WSGI و Celery |
+| `templates` | قالب‌های HTML عمومی، حساب کاربری، `checkout`، سفارش و ادمین سفارشی |
 | `static` | CSS، JavaScript و دارایی‌های استاتیک |
-| `docs` | مستندات راه‌اندازی، استقرار، observability، backup/restore و چک‌لیست‌ها |
-| `deploy` | اسکریپت‌های deploy، backup، restore، healthcheck و SSL |
-| `docker` | Dockerfile، تنظیمات Gunicorn، entrypoint و قالب‌های Nginx |
+| `docs` | مستندات راه‌اندازی، استقرار، Observability، backup/restore و چک‌لیست‌ها |
+| `deploy` | اسکریپت‌های `deploy`، backup، restore، `healthcheck` و SSL |
+| `docker` | Dockerfile، تنظیمات Gunicorn، `entrypoint` و قالب‌های Nginx |
 | `tests` | تست‌های واحد، integration، edge case، concurrency، load و مستندات تست |
 
 ---
@@ -233,7 +233,7 @@ docker compose exec web python manage.py collectstatic --noinput
 فایل `docker-compose.production.yml` برای استقرار VPS آماده شده و شامل سرویس‌های زیر است:
 
 - `db` برای PostgreSQL
-- `redis` برای cache/session و Celery broker
+- `redis` برای `cache/session` و Celery broker
 - `web` برای اجرای Django با Gunicorn
 - `celery_worker`
 - `celery_beat`
@@ -252,7 +252,7 @@ docker compose exec web python manage.py collectstatic --noinput
 | Launch Checklist | `docs/LAUNCH_CHECKLIST.md` |
 | Launch Test Plan | `docs/LAUNCH_TEST_PLAN.md` |
 | VPS Runbook | `docs/VPS_LAUNCH_RUNBOOK.md` |
-| Backup / Restore | `docs/BACKUP_RESTORE.md` |
+| backup/restore | `docs/BACKUP_RESTORE.md` |
 | Observability | `docs/OBSERVABILITY.md` |
 | Migration Notes | `docs/MIGRATION_HISTORY_NOTES.md` |
 
@@ -260,9 +260,9 @@ docker compose exec web python manage.py collectstatic --noinput
 
 | اسکریپت | کاربرد |
 | --- | --- |
-| `deploy/deploy.sh` | اجرای مراحل deploy، migration و collectstatic |
-| `deploy/backup.sh` | پشتیبان‌گیری از دیتابیس و media |
-| `deploy/restore.sh` | بازیابی دیتابیس و media |
+| `deploy/deploy.sh` | اجرای مراحل `deploy`، migration و collectstatic |
+| `deploy/backup.sh` | پشتیبان‌گیری از دیتابیس و `media` |
+| `deploy/restore.sh` | بازیابی دیتابیس و `media` |
 | `deploy/healthcheck.sh` | بررسی سلامت سرویس |
 | `deploy/init-ssl.sh` | راه‌اندازی SSL |
 | `deploy/render-nginx.sh` | تولید تنظیمات Nginx |
@@ -297,17 +297,17 @@ pytest -q
 
 ## وضعیت پروژه
 
-Production Ready
+production Ready
 
 این وضعیت به این معناست که پروژه دارای تنظیمات تولیدی جداگانه، Dockerfile، Docker Compose تولیدی، Gunicorn، Nginx، health/readiness endpoints، لاگ‌گیری، پشتیبانی از Sentry، اسکریپت‌های backup/restore، چک‌لیست استقرار، تست‌های گسترده و مسیرهای عملیاتی برای سفارش، پرداخت، موجودی و مدیریت است.
 
-Production Ready بودن به معنی حذف نیاز به تنظیمات محیطی نیست. پیش از اجرا روی سرور واقعی باید `.env`، دامنه، HTTPS، پرداخت، SMS، backup، مانیتورینگ و دسترسی‌های مدیریتی مطابق مستندات `docs` تکمیل و بررسی شوند.
+production Ready بودن به معنی حذف نیاز به تنظیمات محیطی نیست. پیش از اجرا روی سرور واقعی باید `.env`، دامنه، HTTPS، پرداخت، SMS، backup، مانیتورینگ و دسترسی‌های مدیریتی مطابق مستندات `docs` تکمیل و بررسی شوند.
 
 ---
 
 ## مستندات
 
-مستندات فنی و عملیاتی پروژه در پوشه `docs` نگهداری می‌شود. برای راه‌اندازی، استقرار، بررسی سلامت، observability، backup/restore و برنامه تست انتشار، از این پوشه شروع کنید.
+مستندات فنی و عملیاتی پروژه در پوشه `docs` نگهداری می‌شود. برای راه‌اندازی، استقرار، بررسی سلامت، Observability، backup/restore و برنامه تست انتشار، از این پوشه شروع کنید.
 
 ---
 
