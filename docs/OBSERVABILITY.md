@@ -156,4 +156,4 @@ Safe payment/order logs use **IDs only** (no customer PII):
 
 ---
 
-See also: [DEPLOYMENT_ENV_CHECKLIST.md](DEPLOYMENT_ENV_CHECKLIST.md), [LOCAL_PROD_DRY_RUN.md](LOCAL_PROD_DRY_RUN.md).
+See also: [DEPLOYMENT_ENV_CHECKLIST.md](../DEPLOYMENT_ENV_CHECKLIST.md), [LOCAL_PROD_DRY_RUN.md](../LOCAL_PROD_DRY_RUN.md).
