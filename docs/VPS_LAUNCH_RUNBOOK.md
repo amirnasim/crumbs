@@ -151,6 +151,8 @@ git pull
 ./deploy/healthcheck.sh
 ```
 
+`deploy.sh update` force-recreates `web` (new internal IP), then reloads Nginx so upstream `web:8000` is re-resolved, and runs health checks. Skipping the Nginx reload can leave a stale upstream IP and produce temporary `502 Bad Gateway` responses.
+
 Tail logs if needed:
 
 ```bash

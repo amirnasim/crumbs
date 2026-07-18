@@ -165,6 +165,8 @@ Or use the helper:
 ./deploy/deploy.sh update
 ```
 
+This rebuilds/recreates app containers, reloads Nginx so upstream `web:8000` picks up the new container IP (avoids temporary `502`), then runs health checks.
+
 ### 1.8 Create admin user
 
 ```bash

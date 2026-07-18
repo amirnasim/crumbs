@@ -25,6 +25,7 @@ Crumbs یک سامانه تحت وب برای سفارش‌گیری، پرداخ
 - افزودن محصول به سبد خرید
 - تغییر تعداد اقلام سبد خرید و حذف اقلام
 - نمایش تعداد اقلام سبد خرید در هدر موبایل و دسکتاپ
+- دسترسی به سبد خرید از منوی کشویی موبایل (badge فقط در صورت وجود اقلام)
 - رزرو موجودی هنگام افزودن/به‌روزرسانی سبد خرید
 - ثبت سفارش برای تحویل از کانتر
 - انتخاب روش پرداخت:
@@ -260,13 +261,15 @@ docker compose exec web python manage.py collectstatic --noinput
 
 | اسکریپت | کاربرد |
 | --- | --- |
-| `deploy/deploy.sh` | اجرای مراحل `deploy`، migration و collectstatic |
+| `deploy/deploy.sh` | اجرای مراحل `deploy`، migration، collectstatic و به‌روزرسانی سرویس‌ها |
 | `deploy/backup.sh` | پشتیبان‌گیری از دیتابیس و `media` |
 | `deploy/restore.sh` | بازیابی دیتابیس و `media` |
 | `deploy/healthcheck.sh` | بررسی سلامت سرویس |
 | `deploy/init-ssl.sh` | راه‌اندازی SSL |
 | `deploy/render-nginx.sh` | تولید تنظیمات Nginx |
 | `deploy/server-bootstrap.sh` | آماده‌سازی اولیه سرور |
+
+`./deploy/deploy.sh update` پس از rebuild و force-recreate سرویس `web`، Nginx را reload می‌کند تا DNS داخلی upstream (`web:8000`) تازه شود. بدون این reload، IP قبلی کانتینر `web` در Nginx باقی می‌ماند و ممکن است موقتاً `502 Bad Gateway` رخ دهد. در پایان همین فرمان، health check اجرا می‌شود.
 
 استقرار تولیدی باید با `.env` کامل، دامنه واقعی، تنظیمات HTTPS، تنظیمات پایگاه داده، Redis، SMS، پرداخت و مانیتورینگ انجام شود.
 

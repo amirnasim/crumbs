@@ -135,7 +135,9 @@ Safe payment/order logs use **IDs only** (no customer PII):
 
 1. **Site down / 502**
    - `docker compose -f docker-compose.production.yml ps`
-   - `curl /health/` — if fails, restart web: `./deploy/deploy.sh restart`
+   - Compare gateway vs container: if `curl` through Nginx returns 502 but `web` `/health/` is 200, check Nginx logs for `connect() failed` to a stale upstream IP (after `web` recreate, Nginx must reload to re-resolve `web:8000`)
+   - Quick recovery: `docker compose -f docker-compose.production.yml exec nginx nginx -s reload` (or re-run `./deploy/deploy.sh update`, which reloads Nginx automatically)
+   - `curl /health/` via `SITE_URL` — if it still fails after reload, restart web: `./deploy/deploy.sh restart`
    - `curl /ready/` — identify failing check (`database`, `redis`, `celery_broker`, `migrations`)
 
 2. **Payments stuck**

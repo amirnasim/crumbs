@@ -16,7 +16,8 @@ Record: tester name, date, git commit, `SITE_URL`, pass/fail per row.
 | P2 | Shop loads | Open `/shop/` | Product grid, categories | ☐ |
 | P3 | Product detail | Click a product | Name, price, image, add-to-cart | ☐ |
 | P4 | Desktop nav | Resize ≥1024px | Header links work | ☐ |
-| P5 | Mobile drawer | Resize &lt;768px, open menu | Drawer opens, links work, closes on navigate | ☐ |
+| P5 | Mobile drawer | Resize &lt;768px, open menu | Drawer opens; includes «سبد خرید»; links work; closes on navigate | ☐ |
+| P5b | Drawer cart badge | Empty cart, then add ≥1 item and reopen drawer | Badge hidden when empty; count shown when cart has items | ☐ |
 | P6 | Footer links | Click footer items | Contact, careers, legal pages load | ☐ |
 | P7 | robots.txt | `curl -I /robots.txt` | HTTP 200 | ☐ |
 | P8 | sitemap.xml | `curl -I /sitemap.xml` | HTTP 200 | ☐ |
