@@ -59,6 +59,11 @@
           {% else %}
           <li style="--nav-i: 5"><a href="{% url 'accounts:login' %}" class="menu-drawer__link rtl-text" data-nav="/accounts/login">حساب من</a></li>
           {% endif %}
+          <li style="--nav-i: 6">
+            <a href="{% url 'core:cart' %}" class="menu-drawer__link rtl-text" data-nav="/cart">
+              سبد خرید{% if cart_item_count %} <span class="ltr-text" dir="ltr">({{ cart_item_count }})</span>{% endif %}
+            </a>
+          </li>
         </ul>
       </nav>
     </div>

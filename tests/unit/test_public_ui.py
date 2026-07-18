@@ -122,10 +122,27 @@ def test_drawer_matches_fullscreen_reference_layout(client):
     assert "Crumbs · Tehran" in drawer
     assert "Designed by Amirhossein Nasimi" in drawer
     assert "site-credit" not in drawer
-    for label in ("خانه", "منو", "داستان ما", "تماس با ما", "همکاری با ما", "حساب من"):
+    for label in ("خانه", "منو", "داستان ما", "تماس با ما", "همکاری با ما", "حساب من", "سبد خرید"):
         assert label in drawer
-    assert 'data-nav="/cart"' not in drawer
-    assert "سبد خرید" not in drawer
+    assert 'data-nav="/cart"' in drawer
+    assert f'href="{reverse("core:cart")}"' in drawer
+    # Empty cart: count badge is hidden in the drawer (unlike the header count).
+    assert "(0)" not in drawer
+
+
+@pytest.mark.django_db
+def test_drawer_cart_link_shows_count_badge_when_cart_has_items(client, user, product):
+    create_cart_with_item(user, product, quantity=2)
+    client.force_login(user)
+
+    content = client.get(reverse("core:home")).content.decode()
+    drawer_start = content.index('id="menu-drawer"')
+    drawer_end = content.index("</aside>", drawer_start)
+    drawer = content[drawer_start:drawer_end]
+
+    assert "سبد خرید" in drawer
+    assert 'data-nav="/cart"' in drawer
+    assert '<span class="ltr-text" dir="ltr">(2)</span>' in drawer
 
 
 @pytest.mark.django_db
