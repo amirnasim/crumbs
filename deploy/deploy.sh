@@ -100,6 +100,11 @@ cmd_update() {
   cmd_migrate
   cmd_collectstatic
   $COMPOSE up -d --force-recreate web celery_worker celery_beat
+  # Nginx resolves upstream hostnames (web:8000) at start/reload time and caches
+  # the IP. Force-recreating web changes its container IP; without a reload nginx
+  # keeps proxying to the stale address and returns 502 Bad Gateway.
+  echo "==> Reloading nginx to refresh upstream DNS for web..."
+  $COMPOSE exec -T nginx nginx -s reload || $COMPOSE up -d --force-recreate nginx
   ./deploy/healthcheck.sh
   echo "Update complete."
 }
