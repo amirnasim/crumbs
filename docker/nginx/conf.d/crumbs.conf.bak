@@ -3,39 +3,15 @@ upstream crumbs_web {
     keepalive 32;
 }
 
-# Redirect all HTTP traffic to HTTPS
+# HTTP — ACME challenges + redirect to HTTPS when SSL is enabled
 server {
     listen 80;
-    listen [::]:80;
-
-    server_name cafe-crumbs.com www.cafe-crumbs.com;
+    server_name localhost www.localhost;
 
     location /.well-known/acme-challenge/ {
         root /var/www/certbot;
         allow all;
     }
-
-    location / {
-        return 301 https://$host$request_uri;
-    }
-}
-
-# HTTPS application server
-server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-
-    server_name cafe-crumbs.com www.cafe-crumbs.com;
-
-    ssl_certificate /etc/nginx/ssl/origin.crt;
-    ssl_certificate_key /etc/nginx/ssl/origin.key;
-
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_session_cache shared:SSL:10m;
-    ssl_session_timeout 1d;
-    ssl_session_tickets off;
-
-    client_max_body_size 20M;
 
     location /static/ {
         alias /var/www/static/;
@@ -45,32 +21,29 @@ server {
         access_log off;
     }
 
+    # User uploads — static files only; never execute as scripts (see DEPLOYMENT_ENV_CHECKLIST.md)
     location /media/ {
         alias /var/www/media/;
         default_type application/octet-stream;
-
         types {
             application/pdf pdf;
         }
-
         add_header X-Content-Type-Options nosniff always;
         expires 7d;
         add_header Cache-Control "public";
         access_log off;
     }
 
+    # Before SSL: proxy to Django. After SSL: use crumbs-ssl.conf (HTTP redirects).
     location / {
         proxy_pass http://crumbs_web;
         proxy_http_version 1.1;
-
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto https;
-
+        proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header Connection "";
         proxy_redirect off;
-
         proxy_read_timeout 120s;
         proxy_connect_timeout 10s;
     }

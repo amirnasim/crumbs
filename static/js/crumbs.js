@@ -242,12 +242,6 @@
       window.addEventListener("scroll", updateHeader, { passive: true });
     }
 
-    if (heroScene) {
-      var heroVideo = heroScene.querySelector(".story-hero__video");
-      if (heroVideo) {
-        heroVideo.play().catch(function () {});
-      }
-    }
   }
 
   // Café menu — instant category switch with fade

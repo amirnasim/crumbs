@@ -28,8 +28,8 @@
   <meta name="twitter:image" content="{{ SITE_URL }}{% static 'img/crumbs-logo.png' %}">
   {% endblock %}
 
-  <link rel="icon" href="{% static 'img/crumbs-logo.png' %}" type="image/png">
-  <link rel="apple-touch-icon" href="{% static 'img/crumbs-logo.png' %}">
+  <link rel="icon" href="{% static 'img/crumbs-logo.png' %}?v=20260730-3" type="image/png">
+  <link rel="apple-touch-icon" href="{% static 'img/crumbs-logo.png' %}?v=20260730-3">
 
   {% block preload %}{% endblock %}
 
@@ -40,7 +40,8 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Playfair+Display:wght@400;500;600&display=swap"></noscript>
 
-  <link rel="stylesheet" href="{% static 'css/crumbs.css' %}">
+  {# Query version busts Cloudflare/browser caches after static 404 incidents (unhashed filenames). #}
+  <link rel="stylesheet" href="{% static 'css/crumbs.css' %}?v=20260730-3">
   {% block extra_head %}{% endblock %}
   {% block structured_data %}{% include "partials/structured_data_site.html" %}{% endblock %}
 </head>
@@ -51,7 +52,7 @@
     {% block content %}{% endblock %}
   </main>
   {% include "partials/footer.html" %}
-  <script src="{% static 'js/crumbs.js' %}" defer></script>
+  <script src="{% static 'js/crumbs.js' %}?v=20260730-3" defer></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -27,6 +27,7 @@ def test_public_pages_have_header_script_logo(client, url_name):
     assert "brand-logo--header" in content
     assert "crumbs-logo.png" in content
     assert "crumbs-logo-on-dark.png" not in content
+    assert 'alt="Crumbs"' in content
     assert "header-brand" in content
     assert "header-nav" in content
     assert "brand-wordmark--header" not in content
@@ -149,10 +150,28 @@ def test_drawer_cart_link_shows_count_badge_when_cart_has_items(client, user, pr
 def test_homepage_hero_is_media_only(client):
     content = client.get(reverse("core:home")).content.decode()
 
+    assert 'id="story-scene-1"' in content
+    assert "story-scene--hero" in content
     assert "story-hero__scroll" not in content
+    assert "story-hero__fallback" not in content
+    assert "story-hero__video" not in content
+    assert "story-hero__media" not in content
+    assert "story-hero__scrim" not in content
     assert "Fresh Cookies. Real Ingredients." not in content
     assert "story-hero__wordmark" not in content
     assert "Enter the Bakery" not in content
+    assert "pexels" not in content.lower()
+    main_start = content.index('id="main-content"')
+    main_end = content.index("</main>", main_start)
+    main = content[main_start:main_end]
+    hero_start = main.index("story-scene--hero")
+    hero_end = main.index("</section>", hero_start)
+    hero = main[hero_start:hero_end]
+    assert "<img" not in hero
+    assert "<video" not in hero
+    assert "preload" not in hero
+    assert "background-image" not in hero
+    assert "crumbs-logo" not in hero
 
 
 @pytest.mark.django_db

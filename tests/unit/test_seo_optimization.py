@@ -47,19 +47,21 @@ def test_private_flow_pages_are_noindex(client, url_name):
 
 
 @pytest.mark.django_db
-def test_home_preloads_hero_poster(client):
+def test_home_does_not_preload_hero_media(client):
     content = client.get(reverse("core:home")).content.decode()
+    head = content.split("<body", 1)[0]
 
-    assert 'rel="preload" as="image"' in content
-    assert "1727928" in content
-    assert 'fetchpriority="high"' in content
+    assert "pexels" not in content.lower()
+    assert 'preload="metadata"' not in content
+    assert 'rel="preload" as="image"' not in head
 
 
 @pytest.mark.django_db
-def test_home_hero_video_uses_metadata_preload(client):
+def test_home_hero_has_no_video(client):
     content = client.get(reverse("core:home")).content.decode()
 
-    assert 'preload="metadata"' in content
+    assert "<video" not in content.lower()
+    assert 'preload="metadata"' not in content
 
 
 @pytest.mark.django_db

@@ -2,12 +2,13 @@
 {% with variant=variant|default:"default" size=size|default:"header" %}
 <a href="{% url 'core:home' %}" class="brand-logo-link brand-logo-link--{{ size }}" aria-label="صفحه اصلی Crumbs">
   <img
-    src="{% if variant == 'on-dark' %}{% static 'img/crumbs-logo-on-dark.png' %}{% else %}{% static 'img/crumbs-logo.png' %}{% endif %}"
-    alt=""
+    src="{% if variant == 'on-dark' %}{% static 'img/crumbs-logo-on-dark.png' %}?v=20260730-3{% else %}{% static 'img/crumbs-logo.png' %}?v=20260730-3{% endif %}"
+    alt="Crumbs"
     class="brand-logo brand-logo--{{ size }}"
     width="785"
     height="483"
-    decoding="async"
+    decoding="sync"
+    loading="eager"
     {% if size == "header" or size == "drawer" %}fetchpriority="high"{% endif %}
   >
 </a>
