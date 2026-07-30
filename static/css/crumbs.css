@@ -593,11 +593,18 @@ a {
   max-width: 100%;
   height: auto;
   object-fit: contain;
+  /* Prevent WebKit from collapsing flex-sized images with only max-height. */
+  flex-shrink: 0;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .brand-logo--header {
+  /* Explicit height (not only max-height) keeps intrinsic width stable in Safari. */
   width: auto;
+  height: 44px;
   max-height: 44px;
+  aspect-ratio: 785 / 483;
 }
 
 @media (min-width: 900px) {
@@ -609,8 +616,9 @@ a {
   .brand-logo--header {
     width: clamp(140px, 12vw, 170px);
     max-width: 170px;
-    max-height: none;
     height: auto;
+    max-height: none;
+    aspect-ratio: 785 / 483;
   }
 }
 
@@ -1758,47 +1766,13 @@ body.page-home {
   color: var(--color-text-muted);
 }
 
-/* Scene 1 — Fullscreen hero */
+/* Scene 1 — Fullscreen empty hero (background + spacing only) */
 .story-scene--hero {
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0;
   overflow: hidden;
   background: var(--color-media-dark);
-}
-
-.story-hero__media {
-  position: absolute;
-  inset: 0;
-}
-
-.story-hero__video,
-.story-hero__fallback {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.story-hero__fallback {
-  z-index: 0;
-}
-
-.story-hero__video {
-  z-index: 1;
-}
-
-.story-hero__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(
-    to bottom,
-    var(--color-hero-scrim-start),
-    var(--color-hero-scrim-end)
-  );
 }
 
 /* Scene 2 — Signature products */
@@ -4735,6 +4709,18 @@ html[dir="rtl"] .filter-link.active {
   margin-bottom: 0.625rem;
   font-size: 0.875rem;
   line-height: 1.65;
+}
+
+.footer-social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-social-link__icon {
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
 }
 
 .footer-bottom {
