@@ -23,8 +23,9 @@ server {
 
     location /static/ {
         alias /var/www/static/;
-        expires 30d;
-        add_header Cache-Control "public, immutable";
+        # Unhashed filenames: do not use "immutable".
+        expires 1h;
+        add_header Cache-Control "public, max-age=3600, must-revalidate";
         access_log off;
     }
 

@@ -178,7 +178,6 @@ services:
       - media_volume:/var/www/media:ro
       - certbot_www:/var/www/certbot:ro
       - certbot_conf:/etc/letsencrypt:ro
-      - /etc/nginx/ssl:/etc/nginx/ssl:ro
     depends_on:
       web:
         condition: service_healthy
