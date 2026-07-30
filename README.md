@@ -2,7 +2,19 @@
 
 سامانه جامع سفارش‌گیری و مدیریت کافه و بیکری
 
-نسخه فعلی: `v2.0.0`
+نسخه فعلی: `v2.0.1`
+
+---
+
+## Latest Release — `v2.0.1`
+
+- حساب اینستاگرام به‌روز شد: `@crumbs.tehran`
+- پاک‌سازی فوتر و نمایش یک لینک اجتماعی با آیکن اینستاگرام
+- پاک‌سازی صفحه تماس و هم‌تراز کردن اطلاعات تماس
+- به‌روزرسانی ساعات کاری: هر روز، ۸:۰۰ صبح تا ۱۰:۳۰ شب
+- بهبود واژه‌گزینی فارسی (از جمله «بیکری» به‌جای «نانوایی»)
+
+جزئیات کامل در `CHANGELOG.md`.
 
 ---
 
@@ -44,6 +56,9 @@ Crumbs یک سامانه تحت وب برای سفارش‌گیری، پرداخ
 - دریافت پیام‌ها و خطاهای کاربرپسند فارسی در جریان سفارش
 - پشتیبانی از شماره میز یا یادداشت سفارش
 - پشتیبانی از صفحات SEO مانند `robots.txt` و `sitemap.xml`
+- صفحه تماس با ساعات کاری و لینک اینستاگرام `@crumbs.tehran`
+- فوتر با لینک شبکه‌های اجتماعی (آیکن اینستاگرام + نام کاربری)
+- رابط کاربری واکنش‌گرا (موبایل و دسکتاپ) با منوی کشویی موبایل
 
 ### امکانات مدیریت
 
@@ -96,6 +111,42 @@ Crumbs یک سامانه تحت وب برای سفارش‌گیری، پرداخ
 ---
 
 ## ساختار پروژه
+
+```text
+crumbs/
+├── apps/                 # Django apps (دامنه کسب‌وکار)
+│   ├── accounts/
+│   ├── careers/
+│   ├── cart/
+│   ├── core/
+│   ├── delivery/
+│   ├── growth/
+│   ├── intelligence/
+│   ├── inventory/
+│   ├── loyalty/
+│   ├── notifications/
+│   ├── orders/
+│   ├── payments/
+│   ├── products/
+│   └── wishlist/
+├── config/               # تنظیمات Django، URLs، Celery، ASGI/WSGI
+├── deploy/               # اسکریپت‌های استقرار، backup، SSL، healthcheck
+├── docker/               # Dockerfile، Gunicorn، Nginx
+├── docs/                 # مستندات رسمی و runbookهای عملیاتی
+├── requirements/         # وابستگی‌های base / dev / prod / test
+├── scripts/              # ابزارهای کمکی (مثلاً تست PostgreSQL)
+├── static/               # CSS، JS، تصاویر
+├── templates/            # قالب‌های HTML
+├── tests/                # pytest suite
+├── docker-compose.yml
+├── docker-compose.production.yml
+├── manage.py
+├── README.md
+├── CHANGELOG.md
+├── DEPLOYMENT.md
+├── INSTALL.md
+└── .env.example
+```
 
 کد اصلی پروژه در پوشه `apps` قرار دارد. هر اپلیکیشن مسئول یک بخش مشخص از دامنه کسب‌وکار یا زیرساخت سامانه است.
 
@@ -240,22 +291,60 @@ docker compose exec web python manage.py collectstatic --noinput
 - `celery_beat`
 - `nginx`
 
-فرمان‌های اصلی تولیدی از طریق اسکریپت‌های پوشه `deploy` اجرا می‌شوند.
+مسیر استاندارد استقرار تولید روی سرور: `/opt/crumbs`
+
+فرمان پایه Compose در تولید:
+
+```bash
+cd /opt/crumbs
+docker compose --env-file .env -f docker-compose.production.yml ...
+```
+
+فرمان‌های اصلی تولیدی از طریق اسکریپت‌های پوشه `deploy` اجرا می‌شوند (همان Compose و `--env-file .env` را استفاده می‌کنند).
+
+### متغیرهای محیطی
+
+نمونه کامل متغیرها در `.env.example` است. فایل `.env` واقعی هرگز commit نمی‌شود.
+
+گروه‌های اصلی:
+
+| گروه | نمونه‌ها |
+| --- | --- |
+| Django | `SECRET_KEY`، `DEBUG`، `ALLOWED_HOSTS`، `CSRF_TRUSTED_ORIGINS`، `SITE_URL` |
+| Database | `POSTGRES_DB`، `POSTGRES_USER`، `POSTGRES_PASSWORD`، `POSTGRES_HOST` |
+| Redis / Celery | `REDIS_URL`، `CELERY_BROKER_URL`، `CELERY_RESULT_BACKEND` |
+| Domain / TLS | `DOMAIN`، `ENABLE_HTTPS`، `CERTBOT_EMAIL` |
+| Payments | `DEFAULT_PAYMENT_PROVIDER`، `ZARINPAL_*`، `STRIPE_*` |
+| SMS | `SMS_PROVIDER`، `KAVENEGAR_API_KEY` |
+| Observability | `SENTRY_DSN`، `SENTRY_RELEASE` / `APP_VERSION` |
+
+جزئیات بیشتر: `DEPLOYMENT_ENV_CHECKLIST.md` و `INSTALL.md`.
 
 ---
 
 ## استقرار
 
-مستندات استقرار در پوشه `docs` قرار دارد و باید قبل از اجرای تولیدی مطالعه شود.
+مستندات استقرار:
 
 | سند | مسیر |
 | --- | --- |
+| Deployment (ورود سریع) | `DEPLOYMENT.md` |
+| Installation | `INSTALL.md` |
+| راهنمای استقرار | `docs/06-راهنمای-استقرار.md` |
 | Launch Checklist | `docs/LAUNCH_CHECKLIST.md` |
 | Launch Test Plan | `docs/LAUNCH_TEST_PLAN.md` |
 | VPS Runbook | `docs/VPS_LAUNCH_RUNBOOK.md` |
 | backup/restore | `docs/BACKUP_RESTORE.md` |
 | Observability | `docs/OBSERVABILITY.md` |
 | Migration Notes | `docs/MIGRATION_HISTORY_NOTES.md` |
+
+به‌روزرسانی معمول روی سرور تولید:
+
+```bash
+cd /opt/crumbs
+git pull
+./deploy/deploy.sh update
+```
 
 اسکریپت‌های عملیاتی مهم:
 
@@ -293,30 +382,36 @@ pytest -q
 
 | وضعیت | تعداد |
 | --- | ---: |
-| Passed | 421 |
+| Passed | 422 |
 | Skipped | 4 |
 
 ---
 
 ## وضعیت پروژه
 
-production Ready
+**Production ready** و در حال اجرای تولیدی با Docker Compose (`docker-compose.production.yml`) پشت Nginx.
 
 این وضعیت به این معناست که پروژه دارای تنظیمات تولیدی جداگانه، Dockerfile، Docker Compose تولیدی، Gunicorn، Nginx، health/readiness endpoints، لاگ‌گیری، پشتیبانی از Sentry، اسکریپت‌های backup/restore، چک‌لیست استقرار، تست‌های گسترده و مسیرهای عملیاتی برای سفارش، پرداخت، موجودی و مدیریت است.
 
-production Ready بودن به معنی حذف نیاز به تنظیمات محیطی نیست. پیش از اجرا روی سرور واقعی باید `.env`، دامنه، HTTPS، پرداخت، SMS، backup، مانیتورینگ و دسترسی‌های مدیریتی مطابق مستندات `docs` تکمیل و بررسی شوند.
+Production ready بودن به معنی حذف نیاز به تنظیمات محیطی نیست. پیش از اجرا یا به‌روزرسانی روی سرور باید `.env`، دامنه، HTTPS، پرداخت، SMS، backup، مانیتورینگ و دسترسی‌های مدیریتی مطابق مستندات تکمیل و بررسی شوند.
 
 ---
 
 ## مستندات
 
-مستندات فنی و عملیاتی پروژه در پوشه `docs` نگهداری می‌شود. برای راه‌اندازی، استقرار، بررسی سلامت، Observability، backup/restore و برنامه تست انتشار، از این پوشه شروع کنید.
+مستندات فنی و عملیاتی پروژه در پوشه `docs` نگهداری می‌شود. نقطه ورود سریع: `docs/INDEX.md`، `DEPLOYMENT.md`، `INSTALL.md`.
 
 ---
 
 ## نسخه
 
-نسخه فعلی: `v1.0.2`
+نسخه فعلی: `v2.0.1`
+
+---
+
+## License
+
+فایل `LICENSE` در این repository منتشر نشده است. حقوق استفاده و مالکیت طبق توافق مالک پروژه است.
 
 ---
 

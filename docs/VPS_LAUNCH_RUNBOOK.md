@@ -30,9 +30,12 @@ bash deploy/server-bootstrap.sh
 
 ## 2. Initial setup
 
+مسیر استاندارد تولید: `/opt/crumbs`.
+
 ```bash
-git clone <your-repo-url> crumbs
-cd crumbs
+sudo mkdir -p /opt/crumbs
+sudo git clone <your-repo-url> /opt/crumbs
+cd /opt/crumbs
 cp .env.example .env
 chmod 600 .env
 nano .env

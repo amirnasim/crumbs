@@ -48,3 +48,8 @@ htmlcov/
 
 # User uploaded media
 media/
+
+# Local scratch / WIP (never commit)
+.local-backups/
+.tmp_*
+templates/pages/brise/
